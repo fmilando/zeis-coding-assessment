@@ -14,190 +14,7 @@
     <configurations />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="53437beb-d50c-4c34-9cab-646761e8671b" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.ZeissCodingChallenge/.idea/.name" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.ZeissCodingChallenge/.idea/indexLayout.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.ZeissCodingChallenge/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.ZeissCodingChallenge/.idea/projectSettingsUpdater.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.ZeissCodingChallenge/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/.idea.ZeissCodingChallenge/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/DOCS.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ZeissCodingChallenge.sln" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/ZeissCodingChallenge.sln.DotSettings.user" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/compose.yaml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/01-products-seed.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/data/02-inventory-seed.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/DependencyInjection.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/BaseCommand.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/BaseCommandHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/ErrorCodes.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Inventories/Commands/AddToStock/AddToStockCommand.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Inventories/Commands/AddToStock/AddToStockCommandHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Inventories/Commands/AddToStock/AddToStockCommandValidator.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Inventories/Commands/AddToStock/AddToStockResult.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Inventories/Commands/DecrementStock/DecrementStockCommand.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Inventories/Commands/DecrementStock/DecrementStockCommandHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Inventories/Commands/DecrementStock/DecrementStockCommandValidator.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Inventories/Commands/DecrementStock/DecrementStockResult.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Commands/CreateProduct/CreateProductCommand.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Commands/CreateProduct/CreateProductCommandHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Commands/CreateProduct/CreateProductCommandValidator.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Commands/CreateProduct/CreateProductResult.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Commands/DeleteProduct/DeleteProductCommand.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Commands/DeleteProduct/DeleteProductCommandHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Commands/DeleteProduct/DeleteProductCommandValidator.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Commands/DeleteProduct/DeleteProductResult.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Commands/ProductInventoryReadModelMapper.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Commands/UpdateProduct/UpdateProductCommand.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Commands/UpdateProduct/UpdateProductCommandHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Commands/UpdateProduct/UpdateProductCommandValidator.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Commands/UpdateProduct/UpdateProductResult.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/GetByStockLevel/GetByStockLevelQuery.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/GetByStockLevel/GetByStockLevelQueryHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/GetByStockLevel/GetByStockLevelQueryValidator.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/GetByStockLevel/GetByStockLevelResult.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/GetProductById/GetProductByIdQuery.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/GetProductById/GetProductByIdQueryHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/GetProductById/GetProductByIdQueryValidator.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/GetProductById/GetProductByIdResult.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/GetProducts/GetProductsQuery.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/GetProducts/GetProductsQueryHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/GetProducts/GetProductsQueryValidator.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/GetProducts/GetProductsResult.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/IProductInventoryReadRepository.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/PaginatedQueryValidator.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/ProductInventoryReadModel.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/SearchProducts/SearchProductsQuery.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/SearchProducts/SearchProductsQueryHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/SearchProducts/SearchProductsQueryValidator.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Features/Products/Queries/SearchProducts/SearchProductsResult.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Interfaces/Handlers/IRequestDispatcher.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Interfaces/Handlers/IRequestHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Interfaces/Handlers/RequestDispatcher.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Interfaces/IIdempotencyGuard.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Interfaces/Messaging/IEventPublisher.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Interfaces/Repositories/IInventoryRepository.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Interfaces/Repositories/IProductRepository.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Interfaces/Repositories/IUnitOfWork.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Results/Error.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Results/Result.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Application/Zeiss.Products.Application.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Common/PagedQuery.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Common/PagedResult.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Common/PaginationInfo.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Constants/ProductConstants.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Entities/Entity.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Entities/Inventory.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Entities/Product.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Events/DomainEvent.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Events/InventoryChangedEvent.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Events/InventoryOutOfStockEvent.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Events/InventoryRestockedEvent.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Events/InventoryTrackingStartedEvent.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Events/ProductActivatedEvent.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Events/ProductCreatedEvent.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Events/ProductDeactivatedEvent.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Events/ProductDeletedEvent.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Events/ProductDescriptionChangedEvent.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Events/ProductPriceChangedEvent.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Events/ProductRenamedEvent.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Events/ProductSkuChangedEvent.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Events/ProductUpdatedEvent.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Exceptions/DomainException.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Extensions/DataTimeEx.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Core/Zeiss.Products.Domain/Zeiss.Products.Domain.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Builders/DesignTimeHostBuilder.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Caching/CachingExtensions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Caching/IdempotencyGuard.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Caching/RedisSettings.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Database/DatabaseExtensions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Database/DbConnectionFactory.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Database/DbConstants.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Database/DbErrorInterceptor.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Database/Entities/InventoryEntity.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Database/Entities/ProductEntity.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Database/IDbConnectionFactory.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Database/InventoryEntityConfiguration.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Database/PersistenceDbContext.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Database/ProductEntityConfiguration.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/DependencyInjection.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/HealthChecks/HealthCheckExtensions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Logging/ElasticsearchSettings.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Logging/LoggingExtensions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Mappers/InventoryEntityMapper.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Mappers/ProductEntityMapper.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Messaging/MessagingExtensions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Messaging/RabbitMqEventPublisher.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Messaging/RabbitMqSettings.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Migrations/20260817105239_InitialCreate.Designer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Migrations/20260817105239_InitialCreate.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Migrations/20260817212247_MassTransitOutbox.Designer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Migrations/20260817212247_MassTransitOutbox.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Migrations/Migrations.sql" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Migrations/PersistenceDbContextModelSnapshot.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Properties/AssemblyInfo.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Repositories/InventoryRepository.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Repositories/ProductInventoryReadRepository.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Repositories/ProductRepository.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Infrastructure/Zeiss.Products.Infrastructure/Zeiss.Products.Infrastructure.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Contracts/ApiError.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Contracts/ApiResponse.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Contracts/CreateProductRequest.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Contracts/PageRequest.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Contracts/StockLevelRequest.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Contracts/TokenRequest.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Contracts/UpdateProductRequest.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Converters/ConverterExtensions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Converters/DefaultJsonDateTimeConverter.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Endpoints/EndpointExtensions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Endpoints/HealthChecks/HealthEndpoints.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Endpoints/Inventories/AddToStock.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Endpoints/Inventories/DecrementStock.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Endpoints/Inventories/InventoryEndpoints.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Endpoints/Products/CreateProduct.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Endpoints/Products/DeleteProduct.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Endpoints/Products/GetByStockLevel.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Endpoints/Products/GetProductById.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Endpoints/Products/GetProducts.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Endpoints/Products/ProductEndpoints.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Endpoints/Products/SearchProducts.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Endpoints/Products/UpdateProduct.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Endpoints/Tokens/GetAccessToken.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Filters/FilterExtensions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Filters/IdempotencyFilter.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Helpers/HttpContextHelper.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Mappers/ApiResponseMapper.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Middlewares/GlobalExceptionMiddleware.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Program.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Properties/launchSettings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/ResponseConstants.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Security/JwtSettings.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Security/SecurityExtensions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Swagger/SwaggerExtensions.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/Zeiss.Products.WebApi.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/appsettings.Development.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Presentation/Zeiss.Products.WebApi/appsettings.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/thoughts and decisions.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/Zeiss.Products.IntegrationTests/Auth/TestAuthHandler.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/Zeiss.Products.IntegrationTests/CustomWebApplicationFactory.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/Zeiss.Products.IntegrationTests/WebApi/Endpoints/Inventories/AddToStockTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/Zeiss.Products.IntegrationTests/WebApi/Endpoints/Inventories/DecrementStockTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/Zeiss.Products.IntegrationTests/WebApi/Endpoints/Products/CreateProductTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/Zeiss.Products.IntegrationTests/WebApi/Endpoints/Products/DeleteProductTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/Zeiss.Products.IntegrationTests/WebApi/Endpoints/Products/GetByStockLevelTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/Zeiss.Products.IntegrationTests/WebApi/Endpoints/Products/GetProductsTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/Zeiss.Products.IntegrationTests/WebApi/Endpoints/Products/UpdateProductTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/Zeiss.Products.IntegrationTests/WebApi/Endpoints/Tokens/GetAccessTokenTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/Zeiss.Products.IntegrationTests/Zeiss.Products.IntegrationTests.csproj" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/Zeiss.Products.UnitTests/Infrastructure/Caching/IdempotencyGuardTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/Zeiss.Products.UnitTests/Infrastructure/Messaging/RabbitMqEventPublisherTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/Zeiss.Products.UnitTests/Infrastructure/Repositories/InventoryRepositoryTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/Zeiss.Products.UnitTests/Infrastructure/Repositories/ProductInventoryReadRepositoryTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/Zeiss.Products.UnitTests/Infrastructure/Repositories/ProductRepositoryTests.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/Zeiss.Products.UnitTests/Zeiss.Products.UnitTests.csproj" afterDir="false" />
-    </list>
+    <list default="true" id="53437beb-d50c-4c34-9cab-646761e8671b" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -487,7 +304,7 @@
       <option name="presentableId" value="Default" />
       <updated>1786544553866</updated>
       <workItem from="1786544556243" duration="231205000" />
-      <workItem from="1787105961756" duration="19204000" />
+      <workItem from="1787105961756" duration="19502000" />
     </task>
     <servers />
   </component>
@@ -495,6 +312,17 @@
     <option name="version" value="3" />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
   </component>
