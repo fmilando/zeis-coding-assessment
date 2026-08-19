@@ -102,6 +102,33 @@
       test: ["CMD", "redis-cli", "--user", "appuser", "--pass", "ze1ss<caching>-sync", "--no-auth-warning", "ping"]
     restart: always
     
+  webapi:
+    container_name: webapi
+    build:
+      context: .
+      dockerfile: src/Presentation/Zeiss.Products.WebApi/Dockerfile
+    ports:
+      - "5056:5056"
+      - "7192:7192"
+    environment:
+      #ASPNETCORE_URLS: "http://0.0.0.0:5056;https://0.0.0.0:7192"
+      ASPNETCORE_URLS: "http://0.0.0.0:5056"
+      ASPNETCORE_HTTP_PORTS: 5056
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=zeiss-products;Username=ze1ss;Password=ze1s<s>-pr0ds"
+      Jwt__SecretKey: "emdlLzUtUxchhbGxlbmdlLzUtY2WNvZGUUxchhbGx"
+      Jwt__Issuer: "Docker - Zeiss Products"
+      Jwt__Audience: "zeiss-clients"
+      Jwt__TokenExpirationMinutes: 15
+      RabbitMq__Host: rabbitmq
+      RabbitMq__Port: 5672
+      RabbitMq__VirtualHost: "/"
+      RabbitMq__Username: "ze1s"
+      RabbitMq__Password: "ze-rabbit"
+      Redis__ConnectionString: "redis:6379,user=appuser,password=ze1ss<caching>-sync,Ssl=False,abortConnect=False"
+      Redis__RecordRetentionInSeconds: 30
+      Elasticsearch__Uri: 
+      Elasticsearch__IndexFormat: "ze-docker-product-logs-{0:yyyy.MM.dd}"
+    
 volumes:
   postgres:
     driver: local
