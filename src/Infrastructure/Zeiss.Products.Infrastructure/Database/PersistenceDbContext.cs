@@ -13,7 +13,7 @@ internal sealed class PersistenceDbContext(
     //Application entities
     public DbSet<ProductEntity> Products { get; set; }
     public DbSet<InventoryEntity> Inventory { get; set; }
-    
+
     //Messaging entities
     public DbSet<InboxState> InboxStates { get; set; }
     public DbSet<OutboxState> OutboxStates { get; set; }

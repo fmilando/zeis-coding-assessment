@@ -10,12 +10,12 @@ internal static class HealthEndpoints
         {
             Predicate = _ => false
         }).AllowAnonymous();
-        
+
         routes.MapHealthChecks("/health/live", new HealthCheckOptions()
         {
             Predicate = _ => false
         }).AllowAnonymous();
-        
+
         routes.MapHealthChecks("/health/ready", new HealthCheckOptions()
         {
             Predicate = check => check.Tags.Contains("ready")

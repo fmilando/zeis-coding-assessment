@@ -11,7 +11,7 @@ internal sealed class DecrementStockCommandValidator : AbstractValidator<Decreme
             .GreaterThanOrEqualTo(ProductConstants.IdStartValue)
             .LessThanOrEqualTo(ProductConstants.IdMaxValue)
             .WithName(nameof(DecrementStockCommand.ProductId));
-        
+
         RuleFor(x => x.Quantity)
             .GreaterThan(0)
             .WithName(nameof(DecrementStockCommand.Quantity));

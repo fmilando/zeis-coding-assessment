@@ -17,10 +17,10 @@ public sealed class Product : Entity<long>
 
     public Product(
         long id,
-        string name, 
-        string sku, 
+        string name,
+        string sku,
         string? description,
-        decimal price, 
+        decimal price,
         bool isActive,
         bool isDeleted,
         DateTime createdAt,
@@ -48,14 +48,14 @@ public sealed class Product : Entity<long>
     {
         AddEvent(new ProductCreatedEvent(this));
     }
-    
+
     public void SetName(string name)
     {
         if (IsNotChanged(Name, name))
         {
             return;
         }
-        
+
         var oldName = Name;
         Name = EnsureName(name);
         var @event = new ProductRenamedEvent(Id, oldName, name);
@@ -69,7 +69,7 @@ public sealed class Product : Entity<long>
         {
             return;
         }
-        
+
         var oldSku = Sku;
         Sku = EnsureSku(sku);
         var @event = new ProductSkuChangedEvent(Id, oldSku, sku);
@@ -83,7 +83,7 @@ public sealed class Product : Entity<long>
         {
             return;
         }
-        
+
         var oldDescription = Description ?? string.Empty;
         Description = description;
         var @event = new ProductDescriptionChangedEvent(Id, oldDescription, description);
@@ -97,21 +97,21 @@ public sealed class Product : Entity<long>
         {
             return;
         }
-        
+
         var oldPrice = Price;
         Price = EnsurePrice(price);
         var @event = new ProductPriceChangedEvent(Id, oldPrice, price);
         UpdatedAt = @event.OccurredOn;
         AddEvent(@event);
     }
-    
+
     public void Delete()
     {
-        if(IsDeleted)
+        if (IsDeleted)
         {
             throw new DomainException("Cannot delete an already deleted Product");
         }
-        
+
         IsActive = false;
         IsDeleted = true;
         var @event = new ProductDeletedEvent(Id);
@@ -119,30 +119,29 @@ public sealed class Product : Entity<long>
         DeletedAt = @event.OccurredOn;
         AddEvent(@event);
     }
-    
-    
+
     private static string EnsureName(string name) => EnsureValue(name, nameof(Name));
-    
+
     private static string EnsureSku(string sku) => EnsureValue(sku, nameof(Sku));
-    
+
     private static string EnsureValue(string text, string propertyName) => string.IsNullOrWhiteSpace(text) switch
     {
         true => throw new DomainException($"Product {propertyName} cannot be null or empty"),
         _ => text
     };
-    
+
     private static decimal EnsurePrice(decimal price) => price switch
     {
         <= 0 => throw new DomainException("Price must be greater than zero"),
         _ => price
     };
-    
+
     private static bool IsNotChanged<T>(
-        T? currentValue, 
+        T? currentValue,
         T? newValue
     ) => string.Equals(
-        currentValue?.ToString(), 
-        newValue?.ToString(), 
+        currentValue?.ToString(),
+        newValue?.ToString(),
         StringComparison.InvariantCultureIgnoreCase
     );
 }

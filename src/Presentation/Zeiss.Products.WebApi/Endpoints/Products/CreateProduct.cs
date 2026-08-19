@@ -10,7 +10,7 @@ namespace Zeiss.Products.WebApi.Endpoints.Products;
 internal static class CreateProduct
 {
     public static async Task<IResult> HandleAsync(
-        IRequestDispatcher dispatcher, 
+        IRequestDispatcher dispatcher,
         ILogger logger,
         [FromBody] CreateProductRequest request,
         HttpContext context)
@@ -20,9 +20,9 @@ internal static class CreateProduct
             request.Sku,
             request.Description,
             request.Price);
-        
+
         var result = await dispatcher.DispatchAsync<CreateProductCommand, CreateProductResult>(
-            command, 
+            command,
             context.RequestAborted);
 
         var response = result.ToApiResponse();
@@ -30,10 +30,10 @@ internal static class CreateProduct
         if (result.IsError)
         {
             logger.Error(
-                "Failed to create product with SKU '{SKU}': {Reason}", 
+                "Failed to create product with SKU '{SKU}': {Reason}",
                 request.Sku,
                 result.Errors);
-            
+
             return Results.BadRequest(response);
         }
 

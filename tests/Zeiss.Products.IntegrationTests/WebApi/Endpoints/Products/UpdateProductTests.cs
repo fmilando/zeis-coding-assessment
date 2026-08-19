@@ -15,21 +15,25 @@ public class UpdateProductTests : IClassFixture<CustomWebApplicationFactory>
     {
         _factory = factory;
         _client = factory.CreateClient();
-        
+
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
         _factory.ProductRepositoryMock.Invocations.Clear();
     }
-    
+
     [Fact]
     public async Task HandleAsync_ReturnsNotFound_WhenProductDoesNotExist()
     {
         // Arrange
         var request = new
         {
-            Name = "Updated", Sku = "SKU", Description = "Desc", Price = 150m, IsActive = true
+            Name = "Updated",
+            Sku = "SKU",
+            Description = "Desc",
+            Price = 150m,
+            IsActive = true
         };
-        
-        _factory.ProductRepositoryMock.Setup(x => 
+
+        _factory.ProductRepositoryMock.Setup(x =>
             x.GetByIdAsync(99, It.IsAny<CancellationToken>())
         ).ReturnsAsync((Product?)null);
 

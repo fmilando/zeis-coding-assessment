@@ -8,20 +8,20 @@ internal sealed class GetByStockLevelQueryHandler(
 ) : IRequestHandler<GetByStockLevelQuery, GetByStockLevelResult>
 {
     public async Task<Result<GetByStockLevelResult>> HandleAsync(
-        GetByStockLevelQuery request, 
+        GetByStockLevelQuery request,
         CancellationToken cancellationToken)
     {
         var pagedResult = await repository.GetByStockLevelAsync(
-            request.MinQuantity, 
-            request.MaxQuantity, 
+            request.MinQuantity,
+            request.MaxQuantity,
             request.PageNumber,
             request.PageSize,
             cancellationToken);
 
         var result = new GetByStockLevelResult(
-            pagedResult.Result, 
+            pagedResult.Result,
             pagedResult.PaginationInfo);
-        
+
         return new Result<GetByStockLevelResult>(result);
     }
 }

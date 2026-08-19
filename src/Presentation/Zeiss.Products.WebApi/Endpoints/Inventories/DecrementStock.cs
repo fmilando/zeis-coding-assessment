@@ -9,16 +9,16 @@ namespace Zeiss.Products.WebApi.Endpoints.Inventories;
 internal static class DecrementStock
 {
     public static async Task<IResult> HandleAsync(
-        IRequestDispatcher dispatcher, 
+        IRequestDispatcher dispatcher,
         ILogger logger,
         [FromRoute] int id,
         [FromRoute] int quantity,
         HttpContext context)
     {
         var command = new DecrementStockCommand(id, quantity);
-        
+
         var result = await dispatcher.DispatchAsync<DecrementStockCommand, DecrementStockResult>(
-            command, 
+            command,
             context.RequestAborted);
 
         var response = result.ToApiResponse();
@@ -26,11 +26,11 @@ internal static class DecrementStock
         if (result.IsError)
         {
             logger.Error(
-                "Failed to decrement the stock of product {ProductId} by {Quantity}: {Reason}", 
+                "Failed to decrement the stock of product {ProductId} by {Quantity}: {Reason}",
                 id,
                 quantity,
                 result.Errors);
-            
+
             return Results.BadRequest(response);
         }
 

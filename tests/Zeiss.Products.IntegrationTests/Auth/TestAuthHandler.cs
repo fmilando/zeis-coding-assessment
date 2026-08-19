@@ -9,9 +9,11 @@ namespace Zeiss.Products.IntegrationTests.Auth;
 public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
     public TestAuthHandler(
-        IOptionsMonitor<AuthenticationSchemeOptions> options, 
+        IOptionsMonitor<AuthenticationSchemeOptions> options,
         ILoggerFactory logger, UrlEncoder encoder
-    ) : base(options, logger, encoder) { }
+    ) : base(options, logger, encoder)
+    {
+    }
 
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {

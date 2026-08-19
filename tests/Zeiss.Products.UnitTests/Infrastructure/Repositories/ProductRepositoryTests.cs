@@ -27,7 +27,7 @@ public sealed class ProductRepositoryTests : IDisposable
 
         var loggerMock = new Mock<ILogger<DbErrorInterceptor>>();
         var interceptor = new DbErrorInterceptor(loggerMock.Object);
-        
+
         _dbContext = new PersistenceDbContext(options, interceptor);
         _dbContext.Database.EnsureCreated();
 
@@ -56,7 +56,7 @@ public sealed class ProductRepositoryTests : IDisposable
         Assert.Equal(product.Price, result.Price);
 
         var saved = await _dbContext.Products.FindAsync(result.Id);
-        
+
         Assert.NotNull(saved);
         Assert.Equal(product.Name, saved.Name);
         Assert.Equal(product.Sku, saved.Sku);
@@ -153,7 +153,7 @@ public sealed class ProductRepositoryTests : IDisposable
         Assert.Equal(updatedName, result.Name);
 
         _dbContext.ChangeTracker.Clear();
-        
+
         var inDb = await _dbContext.Products.FindAsync(added.Id);
         Assert.NotNull(inDb);
         Assert.Equal(updatedName, inDb.Name);
@@ -187,7 +187,7 @@ public sealed class ProductRepositoryTests : IDisposable
 
         // Assert
         _dbContext.ChangeTracker.Clear();
-        
+
         var inDb = await _dbContext.Products.FindAsync(added.Id);
         Assert.NotNull(inDb);
         Assert.False(inDb.IsActive);

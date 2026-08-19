@@ -10,7 +10,7 @@ namespace Zeiss.Products.WebApi.Endpoints.Products;
 internal static class UpdateProduct
 {
     public static async Task<IResult> HandleAsync(
-        IRequestDispatcher dispatcher, 
+        IRequestDispatcher dispatcher,
         ILogger logger,
         [FromRoute] int id,
         [FromBody] UpdateProductRequest request,
@@ -22,21 +22,21 @@ internal static class UpdateProduct
             request.Sku,
             request.Description,
             request.Price);
-        
+
         var result = await dispatcher.DispatchAsync<UpdateProductCommand, UpdateProductResult>(
-            command, 
+            command,
             context.RequestAborted);
 
         var response = result.ToApiResponse();
-        
+
         if (result.IsSuccess)
         {
             logger.Information("Updated product {ProductId}", id);
             return Results.Accepted($"{EndpointExtensions.BaseEndpoint}/{result.Value!.Product.ProductId}", response);
         }
-        
+
         logger.Error("Failed update product {ProductId}: {Reason}", id, result.Errors);
-        
+
         return Results.BadRequest(response);
     }
 }

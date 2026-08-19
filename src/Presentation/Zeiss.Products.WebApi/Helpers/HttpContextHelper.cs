@@ -9,7 +9,7 @@ internal static class HttpContextHelper
         var host = request.Host;
         var path = request.Path;
         var query = request.QueryString.Value;
-        
+
         return $"{scheme}://{host}{path}{query}";
     }
 }

@@ -5,7 +5,7 @@ using Zeiss.Products.Domain.Entities;
 
 namespace Zeiss.Products.Application.Features;
 
-internal abstract class BaseCommandHandler<TCommand, TResult> (IProductRepository products)
+internal abstract class BaseCommandHandler<TCommand, TResult>(IProductRepository products)
     : IRequestHandler<TCommand, TResult> where TCommand : BaseCommand
 {
     public async Task<Result<TResult>> HandleAsync(TCommand request, CancellationToken cancellationToken)
@@ -16,11 +16,11 @@ internal abstract class BaseCommandHandler<TCommand, TResult> (IProductRepositor
         {
             return await HandleAsync(request, product, cancellationToken);
         }
-        
+
         var error = new Error(
             ErrorCodes.ProductNotFound,
             $"Product {request.ProductId} not found");
-        
+
         return new Result<TResult>([error]);
     }
 

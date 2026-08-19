@@ -18,16 +18,16 @@ internal static class ProductEntityMapper
         UpdatedAt = entity.UpdatedAt,
         DeletedAt = entity.DeletedAt
     };
-    
+
     public static Product? Map(ProductEntity? entity) => entity switch
     {
         null => null,
         _ => new Product(
             entity.Id,
-            entity.Name, 
-            entity.Sku, 
+            entity.Name,
+            entity.Sku,
             entity.Description,
-            entity.Price, 
+            entity.Price,
             entity.IsActive,
             entity.IsDeleted,
             entity.CreatedAt,

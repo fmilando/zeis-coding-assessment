@@ -24,7 +24,7 @@ public sealed class IdempotencyGuardTests
             RecordRetentionInSeconds = _faker.Random.Int(30, 300)
         };
 
-        _redisMock.Setup(redis => 
+        _redisMock.Setup(redis =>
             redis.GetDatabase(It.IsAny<int>(), It.IsAny<object>())
         ).Returns(_databaseMock.Object);
 
@@ -38,14 +38,14 @@ public sealed class IdempotencyGuardTests
         // Arrange
         var key = _faker.Random.AlphaNumeric(10);
         var expectedValue = _faker.Lorem.Sentence();
-        
-        _databaseMock.Setup(cache => 
+
+        _databaseMock.Setup(cache =>
             cache.StringGetAsync(It.Is<RedisKey>(k => k == key), CommandFlags.None)
         ).ReturnsAsync(expectedValue);
-        
+
         // Act
         var result = await _guard.GetValueAsync(key, CancellationToken.None);
-        
+
         // Assert
         Assert.Equal(expectedValue, result);
         _databaseMock.Verify(db => db.StringGetAsync(It.Is<RedisKey>(k => k == key), CommandFlags.None), Times.Once);
@@ -56,8 +56,8 @@ public sealed class IdempotencyGuardTests
     {
         // Arrange
         var key = _faker.Random.AlphaNumeric(10);
-        
-        _databaseMock.Setup(cache => 
+
+        _databaseMock.Setup(cache =>
             cache.StringGetAsync(It.Is<RedisKey>(k => k == key), CommandFlags.None)
         ).ReturnsAsync(RedisValue.Null);
 
@@ -73,12 +73,12 @@ public sealed class IdempotencyGuardTests
     {
         // Arrange
         var key = _faker.Random.AlphaNumeric(10);
-        
+
         using var cancellationTokenSource = new CancellationTokenSource();
         await cancellationTokenSource.CancelAsync();
 
         // Act and Assert
-        await Assert.ThrowsAsync<OperationCanceledException>(() => 
+        await Assert.ThrowsAsync<OperationCanceledException>(() =>
             _guard.GetValueAsync(key, cancellationTokenSource.Token)
         );
     }
@@ -95,10 +95,10 @@ public sealed class IdempotencyGuardTests
         await _guard.SetValueAsync(key, value, timeout, CancellationToken.None);
 
         // Assert
-        var invocation = _databaseMock.Invocations.FirstOrDefault(call => 
+        var invocation = _databaseMock.Invocations.FirstOrDefault(call =>
             call.Method.Name == nameof(IDatabase.StringSetAsync)
         );
-        
+
         Assert.NotNull(invocation);
         Assert.Equal(key, invocation.Arguments[0].ToString());
         Assert.Equal(value, invocation.Arguments[1].ToString());
@@ -159,7 +159,7 @@ public sealed class IdempotencyGuardTests
         // Assert
         Assert.False(success);
         Assert.Null(lockId);
-        
+
         _loggerMock.Verify(
             x => x.Log(
                 LogLevel.Information,

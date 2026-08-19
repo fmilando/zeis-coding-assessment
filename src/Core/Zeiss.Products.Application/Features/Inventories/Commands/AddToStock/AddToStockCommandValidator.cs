@@ -11,7 +11,7 @@ internal sealed class AddToStockCommandValidator : AbstractValidator<AddToStockC
             .GreaterThanOrEqualTo(ProductConstants.IdStartValue)
             .LessThanOrEqualTo(ProductConstants.IdMaxValue)
             .WithName(nameof(AddToStockCommand.ProductId));
-        
+
         RuleFor(x => x.Quantity)
             .GreaterThan(0)
             .WithName(nameof(AddToStockCommand.Quantity));

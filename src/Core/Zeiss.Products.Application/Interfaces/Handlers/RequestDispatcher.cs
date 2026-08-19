@@ -4,12 +4,12 @@ using Zeiss.Products.Application.Results;
 
 namespace Zeiss.Products.Application.Interfaces.Handlers;
 
-internal sealed class RequestDispatcher (IServiceProvider provider ) : IRequestDispatcher
+internal sealed class RequestDispatcher(IServiceProvider provider) : IRequestDispatcher
 {
     public async Task<Result<TResponse>> DispatchAsync<TRequest, TResponse>(
-        TRequest request, 
+        TRequest request,
         CancellationToken cancellationToken
-    ) where TRequest: class where TResponse : class
+    ) where TRequest : class where TResponse : class
     {
         var handler = provider.GetRequiredService<IRequestHandler<TRequest, TResponse>>();
         var validator = provider.GetService<IValidator<TRequest>>();
@@ -24,7 +24,7 @@ internal sealed class RequestDispatcher (IServiceProvider provider ) : IRequestD
                 return errors;
             }
         }
-        
+
         return await handler.HandleAsync(request, cancellationToken);
     }
 }

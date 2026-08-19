@@ -115,7 +115,7 @@ public sealed class InventoryRepositoryTests : IDisposable
         Assert.Equal(updatedQuantity, result.Quantity);
 
         _dbContext.ChangeTracker.Clear();
-        
+
         var inDb = await _dbContext.Inventory.FirstOrDefaultAsync(x => x.Id == added.Id);
         Assert.NotNull(inDb);
         Assert.Equal(updatedQuantity, inDb.Quantity);
@@ -136,7 +136,7 @@ public sealed class InventoryRepositoryTests : IDisposable
         // Assert
         _dbContext.ChangeTracker.Clear();
         var inDb = await _dbContext.Inventory.FirstOrDefaultAsync(x => x.ProductId == productId);
-        
+
         Assert.NotNull(inDb);
         Assert.Equal(100, inDb.Quantity);
     }
@@ -155,7 +155,7 @@ public sealed class InventoryRepositoryTests : IDisposable
 
         // Assert
         _dbContext.ChangeTracker.Clear();
-        
+
         var inDb = await _dbContext.Inventory.FirstOrDefaultAsync(x => x.ProductId == productId);
         Assert.Null(inDb);
     }

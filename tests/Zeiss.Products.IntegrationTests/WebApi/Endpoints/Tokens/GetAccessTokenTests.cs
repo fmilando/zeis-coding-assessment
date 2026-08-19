@@ -18,7 +18,7 @@ public class GetAccessTokenTests : IClassFixture<CustomWebApplicationFactory>
         // Arrange
         var request = new
         {
-            SecretId = "ValidId", 
+            SecretId = "ValidId",
             SecretKey = "ValidKey"
         };
 

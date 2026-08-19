@@ -11,16 +11,16 @@ internal sealed class CreateProductCommandValidator : AbstractValidator<CreatePr
             .NotEmpty()
             .MaximumLength(ProductConstants.NameMaxLength)
             .WithName(nameof(CreateProductCommand.Name));
-        
+
         RuleFor(x => x.Sku)
             .NotEmpty()
             .MaximumLength(ProductConstants.SkuMaxLength)
             .WithName(nameof(CreateProductCommand.Sku));
-        
+
         RuleFor(x => x.Price)
             .GreaterThan(0)
             .WithName(nameof(CreateProductCommand.Price));
-        
+
         RuleFor(x => x.Description)
             .MaximumLength(ProductConstants.DescriptionMaxLength)
             .WithName(nameof(CreateProductCommand.Description));

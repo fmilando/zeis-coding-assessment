@@ -10,20 +10,20 @@ internal sealed class RabbitMqEventPublisher(
 ) : IEventPublisher
 {
     public async Task PublishAsync<TEvent>(
-        TEvent @event, 
+        TEvent @event,
         CancellationToken cancellationToken
     ) where TEvent : class
     {
         var eventName = @event.GetType().Name;
         try
-        { 
+        {
             await endpoint.Publish(@event, cancellationToken);
             logger.LogInformation("Published event {Event} with {EventData}", eventName, @event);
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "Failed to publish event {EventName} with {EventData}: {Reason}", 
-                eventName, 
+            logger.LogError(ex, "Failed to publish event {EventName} with {EventData}: {Reason}",
+                eventName,
                 @event,
                 ex.Message);
         }

@@ -9,7 +9,7 @@ internal sealed class GetByStockLevelQueryValidator : AbstractValidator<GetBySto
         RuleFor(x => x.MinQuantity)
             .Must(min => min is null or >= 0)
             .WithName(nameof(GetByStockLevelQuery.MinQuantity));
-        
+
         RuleFor(x => x.MaxQuantity)
             .Must(max => max is null or >= 0)
             .WithName(nameof(GetByStockLevelQuery.MaxQuantity));

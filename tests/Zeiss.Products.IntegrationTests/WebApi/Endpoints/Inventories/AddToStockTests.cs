@@ -17,14 +17,14 @@ public class AddToStockTests : IClassFixture<CustomWebApplicationFactory>
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
         _factory.InventoryRepositoryMock.Invocations.Clear();
     }
-    
+
     [Fact]
     public async Task HandleAsync_ReturnsBadRequest_WhenInventoryDoesNotExist()
     {
         // Arrange
-        _factory.InventoryRepositoryMock.Setup(x => 
-            x.GetAsync(100_099, It.IsAny<CancellationToken>())
-        ).ReturnsAsync((Inventory?)null);
+        _factory.InventoryRepositoryMock
+            .Setup(x => x.GetAsync(100_099, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Inventory?)null);
 
         // Act
         var response = await _client.PostAsync("/api/products/100099/add-to-stock/5", null);

@@ -12,7 +12,7 @@ internal sealed class InventoryEntityConfiguration : IEntityTypeConfiguration<In
         builder.HasKey(x => x.Id);
         builder.Property(x => x.Id)
                 .UseIdentityAlwaysColumn();
-        
+
         builder.Property(x => x.ProductId)
                .IsRequired();
     }

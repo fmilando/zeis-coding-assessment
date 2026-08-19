@@ -12,7 +12,7 @@ public class GetByStockLevelTests : IClassFixture<CustomWebApplicationFactory>
     {
         _factory = factory;
         _client = factory.CreateClient();
-        
+
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
         _factory.ProductRepositoryMock.Invocations.Clear();
     }

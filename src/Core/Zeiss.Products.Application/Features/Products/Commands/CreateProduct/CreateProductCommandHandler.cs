@@ -12,28 +12,26 @@ internal sealed class CreateProductCommandHandler(
 ) : IRequestHandler<CreateProductCommand, CreateProductResult>
 {
     public async Task<Result<CreateProductResult>> HandleAsync(
-        CreateProductCommand request, 
+        CreateProductCommand request,
         CancellationToken cancellationToken)
     {
         var product = await products.GetBySkuAsync(request.Sku, cancellationToken);
-        
+
         if (product is not null)
         {
             var error = new Error(
-                ErrorCodes.ProductSkuConflict, 
+                ErrorCodes.ProductSkuConflict,
                 $"Product {request.Sku} already assigned to a product");
             return new Result<CreateProductResult>([error]);
         }
-        
+
         product = new Product(request.Name, request.Sku, request.Description, request.Price);
-        var @event = product.Events.First();
-        
         product = await products.AddAsync(product, cancellationToken);
         await publisher.PublishAsync(product, cancellationToken);
-        
+
         var model = ProductInventoryReadModelMapper.Map(product);
         var result = new CreateProductResult(model);
-        
+
         return result;
     }
 }

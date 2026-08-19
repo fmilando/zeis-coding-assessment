@@ -11,8 +11,6 @@ using Zeiss.Products.WebApi.Swagger;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 
@@ -28,8 +26,6 @@ var app = builder.Build();
 app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseExceptionHandler();
-
-// Configure the HTTP request pipeline.
 app.UseSwaggerPage();
 
 app.UseHttpsRedirection();
@@ -46,7 +42,7 @@ try
 {
     await app.RunAsync();
 }
-catch(Exception ex)
+catch (Exception ex)
 {
     Log.Fatal(ex, "Unexpectedly the application faulted");
 }
@@ -54,4 +50,3 @@ finally
 {
     Log.CloseAndFlush();
 }
-public partial class Program { }

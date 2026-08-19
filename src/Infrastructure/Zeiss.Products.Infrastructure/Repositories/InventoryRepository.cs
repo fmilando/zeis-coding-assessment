@@ -16,7 +16,7 @@ internal sealed class InventoryRepository(PersistenceDbContext context) : IInven
         var entity = await context.Inventory.FirstOrDefaultAsync(
             x => x.ProductId == productId,
             cancellationToken);
-        
+
         return InventoryEntityMapper.Map(entity);
     }
 
@@ -24,10 +24,10 @@ internal sealed class InventoryRepository(PersistenceDbContext context) : IInven
     {
         var entity = InventoryEntityMapper.Map(inventory);
         context.Inventory.Add(entity);
-        
+
         var result = await context.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return InventoryEntityMapper.Map(result.Entity)!;
     }
 
@@ -40,19 +40,19 @@ internal sealed class InventoryRepository(PersistenceDbContext context) : IInven
                 item.SetProperty(p => p.Quantity, inventory.Quantity)
                     .SetProperty(p => p.UpdatedAt, inventory.UpdatedAt);
             }, cancellationToken);
-        
+
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return inventory;
     }
-    
+
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         if (_transaction is not null)
         {
             throw new InvalidOperationException("The transaction already started.");
         }
-        
+
         _transaction = await context.Database.BeginTransactionAsync(cancellationToken);
     }
 
@@ -65,7 +65,7 @@ internal sealed class InventoryRepository(PersistenceDbContext context) : IInven
             _transaction = null;
         }
     }
-    
+
     public async Task DiscardAsync(CancellationToken cancellationToken)
     {
         if (_transaction is not null)

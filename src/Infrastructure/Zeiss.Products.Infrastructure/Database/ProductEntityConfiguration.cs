@@ -14,22 +14,22 @@ internal sealed class ProductEntityConfiguration : IEntityTypeConfiguration<Prod
         builder.Property(x => x.Id)
                 .UseIdentityAlwaysColumn()
                 .HasIdentityOptions(
-                    startValue: ProductConstants.IdStartValue, 
-                    maxValue: ProductConstants.IdMaxValue, 
+                    startValue: ProductConstants.IdStartValue,
+                    maxValue: ProductConstants.IdMaxValue,
                     incrementBy: 1
                 );
-        
+
         builder.Property(x => x.Name)
                 .IsRequired()
                 .HasMaxLength(ProductConstants.NameMaxLength);
-        
+
         builder.Property(x => x.Sku)
                 .IsRequired()
                 .HasMaxLength(ProductConstants.SkuMaxLength);
-        
+
         builder.Property(x => x.Description)
             .HasMaxLength(ProductConstants.DescriptionMaxLength);
-        
+
         builder.Property(x => x.Price).IsRequired();
         builder.Property(x => x.IsActive).IsRequired();
         builder.Property(x => x.IsDeleted).IsRequired();

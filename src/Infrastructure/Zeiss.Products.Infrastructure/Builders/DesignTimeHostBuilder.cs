@@ -17,7 +17,7 @@ public static class DesignTimeHostBuilder
         {
             var connectionString = context.Configuration.GetConnectionString(DbConstants.ConnectionStringName)!;
             var assemblyFullName = typeof(PersistenceDbContext).Assembly.FullName;
-            
+
             services.AddDbContext<PersistenceDbContext>(builder =>
             {
                 builder.UseNpgsql(

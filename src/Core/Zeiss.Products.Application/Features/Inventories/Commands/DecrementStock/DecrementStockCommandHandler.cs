@@ -13,13 +13,13 @@ internal sealed class DecrementStockCommandHandler(
 ) : BaseCommandHandler<DecrementStockCommand, DecrementStockResult>(products)
 {
     protected override async Task<Result<DecrementStockResult>> HandleAsync(
-        DecrementStockCommand request, 
+        DecrementStockCommand request,
         Product product,
         CancellationToken cancellationToken)
     {
         await inventories.StartAsync(cancellationToken);
         var inventory = await inventories.GetAsync(request.ProductId, cancellationToken);
-        
+
         if (inventory is null)
         {
             await inventories.DiscardAsync(cancellationToken);
@@ -33,17 +33,17 @@ internal sealed class DecrementStockCommandHandler(
             var error = new Error(
                 ErrorCodes.InsufficientQuantity,
                 "Insufficient inventory quantity");
-            
+
             return new Result<DecrementStockResult>([error]);
         }
-        
+
         inventory.Decrement(request.Quantity);
         inventory = await inventories.UpdateAsync(inventory, cancellationToken);
         await inventories.CompleteAsync(cancellationToken);
-        
+
         await publisher.PublishAsync(inventory.Events.First(), cancellationToken);
         inventory.ClearEvents();
-        
+
         var model = ProductInventoryReadModelMapper.Map(product, inventory);
         var result = new DecrementStockResult(model);
         return new Result<DecrementStockResult>(result);

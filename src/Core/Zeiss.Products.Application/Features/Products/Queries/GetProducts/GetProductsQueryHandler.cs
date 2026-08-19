@@ -8,18 +8,18 @@ internal sealed class GetProductsQueryHandler(
 ) : IRequestHandler<GetProductsQuery, GetProductsResult>
 {
     public async Task<Result<GetProductsResult>> HandleAsync(
-        GetProductsQuery query, 
+        GetProductsQuery query,
         CancellationToken cancellationToken)
     {
         var pagedResult = await repository.GetAsync(
-            query.PageNumber, 
-            query.PageSize, 
+            query.PageNumber,
+            query.PageSize,
             cancellationToken);
 
         var result = new GetProductsResult(
-            pagedResult.Result, 
+            pagedResult.Result,
             pagedResult.PaginationInfo);
-        
+
         return new Result<GetProductsResult>(result);
     }
 }

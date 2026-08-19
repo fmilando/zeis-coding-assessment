@@ -12,11 +12,11 @@ public class GetProductsTests : IClassFixture<CustomWebApplicationFactory>
     {
         _factory = factory;
         _client = factory.CreateClient();
-        
+
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
         _factory.ProductRepositoryMock.Invocations.Clear();
     }
-    
+
     [Fact]
     public async Task HandleAsync_ReturnsBadRequest_WhenNonHappyPath()
     {

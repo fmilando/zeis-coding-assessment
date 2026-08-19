@@ -26,10 +26,10 @@ internal sealed class ProductRepository(PersistenceDbContext context) : IProduct
     {
         var entity = ProductEntityMapper.Map(product);
         context.Products.Add(entity);
-        
+
         var result = await context.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return ProductEntityMapper.Map(result.Entity)!;
     }
 
@@ -45,9 +45,9 @@ internal sealed class ProductRepository(PersistenceDbContext context) : IProduct
                     .SetProperty(p => p.Price, product.Price)
                     .SetProperty(p => p.UpdatedAt, product.UpdatedAt);
             }, cancellationToken);
-        
+
         await context.SaveChangesAsync(cancellationToken);
-        
+
         return product;
     }
 
@@ -61,7 +61,7 @@ internal sealed class ProductRepository(PersistenceDbContext context) : IProduct
                     .SetProperty(p => p.IsDeleted, product.IsDeleted)
                     .SetProperty(p => p.DeletedAt, product.DeletedAt);
             }, cancellationToken);
-        
+
         await context.SaveChangesAsync(cancellationToken);
     }
 }

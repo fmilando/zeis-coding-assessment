@@ -9,14 +9,14 @@ namespace Zeiss.Products.WebApi.Endpoints.Products;
 internal static class GetProductById
 {
     public static async Task<IResult> HandleAsync(
-        IRequestDispatcher dispatcher, 
+        IRequestDispatcher dispatcher,
         ILogger logger,
         [FromRoute] int id,
         HttpContext context)
     {
         var query = new GetProductByIdQuery(id);
         var result = await dispatcher.DispatchAsync<GetProductByIdQuery, GetProductByIdResult>(
-            query, 
+            query,
             context.RequestAborted);
 
         var response = result.ToApiResponse();
@@ -25,9 +25,9 @@ internal static class GetProductById
         {
             return Results.Ok(response);
         }
-        
+
         logger.Error("Failed to get product by id {ProductId}: {Reason}", id, result.Errors);
-        
+
         return Results.BadRequest(response);
     }
 }

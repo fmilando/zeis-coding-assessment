@@ -13,17 +13,17 @@ internal sealed class DeleteProductCommandHandler(
     private readonly IProductRepository _products = products;
 
     protected override async Task<Result<DeleteProductResult>> HandleAsync(
-        DeleteProductCommand request, 
-        Product product, 
+        DeleteProductCommand request,
+        Product product,
         CancellationToken cancellationToken)
     {
         product.Delete();
         await _products.DeleteAsync(product, cancellationToken);
-        
+
         var @event = product.Events.First();
         await publisher.PublishAsync(@event, cancellationToken);
         product.ClearEvents();
-        
+
         return new Result<DeleteProductResult>(new DeleteProductResult());
     }
 }

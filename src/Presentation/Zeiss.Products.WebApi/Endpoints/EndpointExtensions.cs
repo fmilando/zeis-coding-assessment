@@ -7,12 +7,12 @@ namespace Zeiss.Products.WebApi.Endpoints;
 internal static class EndpointExtensions
 {
     public const string BaseEndpoint = "/api/products";
-    
+
     public static void MapApiEndpoints(this IEndpointRouteBuilder routes)
     {
         routes.MapProductEndpoints();
         routes.MapInventoryEndpoints();
-        
+
         routes.MapPost("/api/auth", GetAccessToken.HandleAsync)
             .WithTags("access-token")
             .AllowAnonymous();

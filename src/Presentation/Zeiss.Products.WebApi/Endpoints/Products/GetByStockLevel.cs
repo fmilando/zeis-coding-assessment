@@ -21,20 +21,20 @@ internal static class GetByStockLevel
         };
 
         var result = await dispatcher.DispatchAsync<GetByStockLevelQuery, GetByStockLevelResult>(
-            query,  
+            query,
             context.RequestAborted);
-        
+
         var response = result.ToApiResponse();
 
         if (result.IsSuccess)
         {
             return Results.Ok(response);
         }
-        
-        logger.Error("Failed to get products by stock levels with {Query}: {Reason}", 
+
+        logger.Error("Failed to get products by stock levels with {Query}: {Reason}",
             request,
             result.Errors);
-        
+
         return Results.BadRequest(response);
     }
 }

@@ -12,9 +12,9 @@ internal class DbErrorInterceptor(
     {
         logger.LogError(
             eventData.Exception,
-            "Database command faulted: {CommandText}", 
+            "Database command faulted: {CommandText}",
             command.CommandText);
-        
+
         base.CommandFailed(command, eventData);
     }
 }

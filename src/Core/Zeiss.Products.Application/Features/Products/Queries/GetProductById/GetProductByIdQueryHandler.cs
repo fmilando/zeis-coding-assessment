@@ -8,7 +8,7 @@ internal sealed class GetProductByIdQueryHandler(
 ) : IRequestHandler<GetProductByIdQuery, GetProductByIdResult>
 {
     public async Task<Result<GetProductByIdResult>> HandleAsync(
-        GetProductByIdQuery request, 
+        GetProductByIdQuery request,
         CancellationToken cancellationToken)
     {
         var model = await repository.GetByIdAsync(request.ProductId, cancellationToken);
@@ -17,11 +17,11 @@ internal sealed class GetProductByIdQueryHandler(
         {
             return new GetProductByIdResult(model);
         }
-        
+
         var error = new Error(
             ErrorCodes.ProductNotFound,
             $"Product {request.ProductId} not found");
-        
+
         return new Result<GetProductByIdResult>([error]);
     }
 }

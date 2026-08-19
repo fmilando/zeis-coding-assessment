@@ -17,7 +17,7 @@ internal static class SecurityExtensions
         {
             var settings = configuration.GetRequiredSection(JwtSettings.SectionName).Get<JwtSettings>()!;
             var secretKey = Encoding.UTF8.GetBytes(settings.SecretKey);
-            
+
             options.TokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuer = true,
@@ -30,7 +30,7 @@ internal static class SecurityExtensions
                 ClockSkew = TimeSpan.Zero
             };
         });
-        
+
         services.AddAuthorization();
     }
 }

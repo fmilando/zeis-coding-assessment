@@ -17,13 +17,13 @@ internal static class HealthCheckExtensions
         IConfiguration configuration
     )
     {
-        var tags = new[]{ "ready" };
-        var healthChecks= services.AddHealthChecks();
-        
-        healthChecks.AddNpgSql(_ => 
-                configuration.GetConnectionString(DbConstants.ConnectionStringName)!, 
+        var tags = new[] { "ready" };
+        var healthChecks = services.AddHealthChecks();
+
+        healthChecks.AddNpgSql(_ =>
+                configuration.GetConnectionString(DbConstants.ConnectionStringName)!,
             name: "postgres-db", tags: tags);
-        
+
         healthChecks.AddRabbitMQ(provider =>
         {
             var settings = configuration.GetRequiredSection(RabbitMqSettings.SectionName).Get<RabbitMqSettings>()!;
@@ -36,7 +36,7 @@ internal static class HealthCheckExtensions
                 Port = settings.Port
             }.CreateConnectionAsync();
         }, name: "rabbitmq", tags: tags);
-            
+
         healthChecks.AddRedis(provider =>
         {
             var settings = provider.GetRequiredService<IOptions<RedisSettings>>().Value;

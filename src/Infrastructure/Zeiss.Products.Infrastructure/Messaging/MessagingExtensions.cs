@@ -23,16 +23,16 @@ internal static class MessagingExtensions
                 options.UsePostgres();
                 options.QueryDelay = TimeSpan.FromSeconds(1);
             });
-            
+
             bus.UsingRabbitMq((context, rabbit) =>
             {
                 var settings = configuration.GetRequiredSection(RabbitMqSettings.SectionName).Get<RabbitMqSettings>()!;
-                rabbit.Host(settings.Host, settings.VirtualHost ?? "/",options =>
+                rabbit.Host(settings.Host, settings.VirtualHost ?? "/", options =>
                 {
                     options.Username(settings.Username);
                     options.Password(settings.Password);
                 });
-                
+
                 rabbit.ConfigureEndpoints(context);
             });
         });

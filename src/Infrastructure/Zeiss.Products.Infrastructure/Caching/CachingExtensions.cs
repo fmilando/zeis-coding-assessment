@@ -16,7 +16,7 @@ internal static class CachingExtensions
         services.AddOptions<RedisSettings>()
             .Bind(configuration.GetSection(RedisSettings.SectionName))
             .ValidateOnStart();
-        
+
         services.AddScoped<IIdempotencyGuard, IdempotencyGuard>();
         services.AddSingleton<IConnectionMultiplexer>(provider =>
         {

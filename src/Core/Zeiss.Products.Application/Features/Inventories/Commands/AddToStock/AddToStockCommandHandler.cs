@@ -14,20 +14,20 @@ internal sealed class AddToStockCommandHandler(
 ) : BaseCommandHandler<AddToStockCommand, AddToStockResult>(products)
 {
     protected override async Task<Result<AddToStockResult>> HandleAsync(
-        AddToStockCommand request, 
+        AddToStockCommand request,
         Product product,
         CancellationToken cancellationToken)
     {
         await inventories.StartAsync(cancellationToken);
         var inventory = await inventories.GetAsync(request.ProductId, cancellationToken);
         DomainEvent @event;
-        
+
         if (inventory is null)
         {
             inventory = new Inventory(request.ProductId, request.Quantity);
             inventory = await inventories.AddAsync(inventory, cancellationToken);
             @event = new InventoryTrackingStartedEvent(
-                inventory.Id, 
+                inventory.Id,
                 inventory.ProductId,
                 inventory.Quantity);
         }
@@ -37,12 +37,12 @@ internal sealed class AddToStockCommandHandler(
             inventory = await inventories.UpdateAsync(inventory, cancellationToken);
             @event = inventory.Events.First();
         }
-        
+
         await inventories.CompleteAsync(cancellationToken);
-        
+
         await publisher.PublishAsync(@event, cancellationToken);
         inventory.ClearEvents();
-        
+
         var model = ProductInventoryReadModelMapper.Map(product, inventory);
         var result = new AddToStockResult(model);
         return new Result<AddToStockResult>(result);

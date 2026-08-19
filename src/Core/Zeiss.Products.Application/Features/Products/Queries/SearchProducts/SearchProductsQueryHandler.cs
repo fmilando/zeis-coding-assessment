@@ -8,19 +8,19 @@ internal sealed class SearchProductsQueryHandler(
 ) : IRequestHandler<SearchProductsQuery, SearchProductsResult>
 {
     public async Task<Result<SearchProductsResult>> HandleAsync(
-        SearchProductsQuery query, 
+        SearchProductsQuery query,
         CancellationToken cancellationToken)
     {
         var pagedResult = await repository.SearchByNameAsync(
-            query.Name, 
-            query.PageNumber, 
-            query.PageSize, 
+            query.Name,
+            query.PageNumber,
+            query.PageSize,
             cancellationToken);
 
         var result = new SearchProductsResult(
-            pagedResult.Result, 
+            pagedResult.Result,
             pagedResult.PaginationInfo);
-        
+
         return new Result<SearchProductsResult>(result);
     }
 }

@@ -9,7 +9,7 @@ namespace Zeiss.Products.WebApi.Endpoints.Products;
 internal static class GetProducts
 {
     public static async Task<IResult> HandleAsync(
-        IRequestDispatcher dispatcher, 
+        IRequestDispatcher dispatcher,
         ILogger logger,
         [AsParameters] PageRequest request,
         HttpContext context)
@@ -19,9 +19,9 @@ internal static class GetProducts
             PageNumber = request.Page ?? 1,
             PageSize = request.PageSize ?? ResponseConstants.DefaultPageSize
         };
-        
+
         var result = await dispatcher.DispatchAsync<GetProductsQuery, GetProductsResult>(
-            query, 
+            query,
             context.RequestAborted);
 
         var response = result.ToApiResponse();
@@ -30,9 +30,9 @@ internal static class GetProducts
         {
             return Results.Ok(response);
         }
-        
+
         logger.Error("Failed to get products with {Query}: {Reason}", request, result.Errors);
-            
+
         return Results.BadRequest(response);
     }
 }

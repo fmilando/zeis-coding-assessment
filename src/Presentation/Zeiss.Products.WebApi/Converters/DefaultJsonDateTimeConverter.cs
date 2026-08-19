@@ -7,8 +7,8 @@ namespace Zeiss.Products.WebApi.Converters;
 internal class DefaultJsonDateTimeConverter : JsonConverter<DateTime>
 {
     public override DateTime Read(
-        ref Utf8JsonReader reader, 
-        Type typeToConvert, 
+        ref Utf8JsonReader reader,
+        Type typeToConvert,
         JsonSerializerOptions options) => DateTime.Parse(reader.GetString()!);
 
     public override void Write(

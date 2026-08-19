@@ -13,15 +13,15 @@ internal static class InventoryEntityMapper
         CreatedAt = entity.CreatedAt,
         UpdatedAt = entity.UpdatedAt ?? entity.CreatedAt
     };
-    
+
     public static Inventory? Map(InventoryEntity? entity) => entity switch
     {
         null => null,
         _ => new Inventory(
-            entity.Id, 
-            entity.ProductId, 
-            entity.Quantity!.Value, 
-            entity.CreatedAt, 
+            entity.Id,
+            entity.ProductId,
+            entity.Quantity!.Value,
+            entity.CreatedAt,
             entity.UpdatedAt
         )
     };

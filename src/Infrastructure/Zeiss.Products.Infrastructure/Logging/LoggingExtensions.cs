@@ -8,17 +8,17 @@ namespace Zeiss.Products.Infrastructure.Logging;
 public static class LoggingExtensions
 {
     public static void AddApiLogging(
-        this ConfigureHostBuilder builder, 
+        this ConfigureHostBuilder builder,
         IConfiguration configuration)
     {
         Log.Logger = new LoggerConfiguration()
             .WriteTo.Console()
             .CreateLogger();
-        
+
         builder.UseSerilog((context, provider, conf) =>
         {
             var settings = configuration.GetRequiredSection(ElasticsearchSettings.SectionName).Get<ElasticsearchSettings>()!;
-            
+
             conf.ReadFrom.Configuration(context.Configuration)
                 .ReadFrom.Services(provider)
                 .Enrich.FromLogContext()

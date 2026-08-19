@@ -3,7 +3,7 @@ using ILogger = Serilog.ILogger;
 namespace Zeiss.Products.WebApi.Middlewares;
 
 internal class GlobalExceptionMiddleware(
-    RequestDelegate next, 
+    RequestDelegate next,
     ILogger logger)
 {
     public async Task Invoke(HttpContext context)

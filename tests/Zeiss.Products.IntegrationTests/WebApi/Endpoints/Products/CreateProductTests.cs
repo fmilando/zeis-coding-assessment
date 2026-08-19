@@ -25,13 +25,13 @@ public class CreateProductTests : IClassFixture<CustomWebApplicationFactory>
         // Arrange
         var request = new
         {
-            Name = "New Product", 
-            Sku = "SKU-NEW", 
-            Description = "Desc", 
-            Price = 100m, 
+            Name = "New Product",
+            Sku = "SKU-NEW",
+            Description = "Desc",
+            Price = 100m,
             IsActive = true
         };
-        
+
         var product = new Product(
             1,
             "New Product",
@@ -39,12 +39,12 @@ public class CreateProductTests : IClassFixture<CustomWebApplicationFactory>
             "Desc",
             100m,
             true,
-            false, 
+            false,
             DateTime.UtcNow,
             null,
             null);
-        
-        _factory.ProductRepositoryMock.Setup(x => 
+
+        _factory.ProductRepositoryMock.Setup(x =>
             x.AddAsync(It.IsAny<Product>(), It.IsAny<CancellationToken>())
         ).ReturnsAsync(product);
 
@@ -54,17 +54,17 @@ public class CreateProductTests : IClassFixture<CustomWebApplicationFactory>
         // Assert
         Assert.Equal(HttpStatusCode.Created, response.StatusCode);
     }
-    
+
     [Fact]
     public async Task HandleAsync_ReturnsBadRequest_WhenNonHappyPath()
     {
         // Arrange
         var request = new
         {
-            Name = "", 
-            Sku = "SKU", 
-            Description = "Desc", 
-            Price = -10m, 
+            Name = "",
+            Sku = "SKU",
+            Description = "Desc",
+            Price = -10m,
             IsActive = true
         };
 

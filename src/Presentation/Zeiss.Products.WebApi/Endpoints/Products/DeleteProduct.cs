@@ -9,15 +9,15 @@ namespace Zeiss.Products.WebApi.Endpoints.Products;
 internal static class DeleteProduct
 {
     public static async Task<IResult> HandleAsync(
-        IRequestDispatcher dispatcher, 
+        IRequestDispatcher dispatcher,
         ILogger logger,
         [FromRoute] int id,
         HttpContext context)
     {
         var command = new DeleteProductCommand(id);
-        
+
         var result = await dispatcher.DispatchAsync<DeleteProductCommand, DeleteProductResult>(
-            command, 
+            command,
             context.RequestAborted);
 
         var response = result.ToApiResponse();
@@ -27,7 +27,7 @@ internal static class DeleteProduct
             logger.Error("Failed to delete product {ProductId}: {Reason}", id, result.Errors);
             return Results.BadRequest(response);
         }
-        
+
         logger.Information("Deleted product {ProductId}", id);
         return Results.NoContent();
     }

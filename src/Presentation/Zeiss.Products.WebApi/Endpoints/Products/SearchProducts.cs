@@ -23,18 +23,18 @@ internal static class SearchProducts
         };
 
         var result = await dispatcher.DispatchAsync<SearchProductsQuery, SearchProductsResult>(
-            query,  
+            query,
             context.RequestAborted);
-        
+
         var response = result.ToApiResponse();
-        
+
         if (result.IsSuccess)
         {
             return Results.Ok(response);
         }
-        
+
         logger.Error("Failed to search products with {Query}: {Reason}", request, result.Errors);
-            
+
         return Results.BadRequest(response);
     }
 }

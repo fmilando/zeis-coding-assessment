@@ -9,25 +9,25 @@ namespace Zeiss.Products.WebApi.Endpoints.Inventories;
 internal static class AddToStock
 {
     public static async Task<IResult> HandleAsync(
-        IRequestDispatcher dispatcher, 
+        IRequestDispatcher dispatcher,
         ILogger logger,
         [FromRoute] int id,
         [FromRoute] int quantity,
         HttpContext context)
     {
         var command = new AddToStockCommand(id, quantity);
-        
+
         var result = await dispatcher.DispatchAsync<AddToStockCommand, AddToStockResult>(
-            command, 
+            command,
             context.RequestAborted);
 
         var response = result.ToApiResponse();
-        
+
         if (result.IsError)
         {
-            logger.Error("Failed to increment the stock of product {ProductId} by {Quantity}: {Reason}", 
-                id, 
-                quantity, 
+            logger.Error("Failed to increment the stock of product {ProductId} by {Quantity}: {Reason}",
+                id,
+                quantity,
                 result.Errors);
             return Results.BadRequest(response);
         }

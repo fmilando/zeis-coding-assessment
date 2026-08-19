@@ -17,14 +17,14 @@ public class DecrementStockTests : IClassFixture<CustomWebApplicationFactory>
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
         _factory.InventoryRepositoryMock.Invocations.Clear();
     }
-    
+
     [Fact]
     public async Task HandleAsync_ReturnsBadRequest_WhenInventoryDoesNotExist()
     {
         // Arrange
-        _factory.InventoryRepositoryMock.Setup(x => 
-            x.GetAsync(99, It.IsAny<CancellationToken>())
-        ).ReturnsAsync((Inventory?)null);
+        _factory.InventoryRepositoryMock
+            .Setup(x => x.GetAsync(99, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Inventory?)null);
 
         // Act
         var response = await _client.PostAsync("/api/products/99/decrement-stock/5", null);

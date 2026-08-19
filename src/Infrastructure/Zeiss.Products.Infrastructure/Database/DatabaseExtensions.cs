@@ -10,7 +10,7 @@ namespace Zeiss.Products.Infrastructure.Database;
 internal static class DatabaseExtensions
 {
     public static void AddDatabase(
-        this IServiceCollection services, 
+        this IServiceCollection services,
         IConfiguration configuration
     )
     {
@@ -19,7 +19,7 @@ internal static class DatabaseExtensions
             var connectionString = configuration.GetConnectionString(DbConstants.ConnectionStringName)!;
             options.UseNpgsql(connectionString);
         });
-        
+
         services.AddDbContextFactory<PersistenceDbContext>(lifetime: ServiceLifetime.Scoped)
                 .AddScoped<IDbConnectionFactory, NpgsqlConnectionFactory>()
                 .AddScoped<IProductRepository, ProductRepository>()

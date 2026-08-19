@@ -7,10 +7,10 @@ public sealed class Result<T>
 
     public bool IsSuccess => Value is not null;
     public bool IsError => IsSuccess is false;
-    
+
     public T? Value { get; }
     public IReadOnlyCollection<Error> Errors { get; } = [];
-    
-    public static implicit operator Result<T>(T value) => new (value);
-    public static implicit operator Result<T>(Error[] errors) => new (errors);
+
+    public static implicit operator Result<T>(T value) => new(value);
+    public static implicit operator Result<T>(Error[] errors) => new(errors);
 }
