@@ -12,6 +12,49 @@
     volumes:
       - postgres:/var/lib/postgresql/data
     restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ze1ss -d zeiss-products"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+  # Run 'dotnet migrations' to update 'postgres'
+  run_migrations:
+    container_name: run_migrations
+    image: mcr.microsoft.com/dotnet/sdk:10.0
+    working_dir: /src
+    volumes:
+      - ./:/src
+    environment:
+      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=zeiss-products;Username=ze1ss;Password=ze1s<s>-pr0ds"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      bash -c "
+        dotnet tool install --global dotnet-ef && 
+        dotnet tool restore && 
+        dotnet build --configuration Release &&
+        /root/.dotnet/tools/dotnet-ef database update --project /src/src/Infrastructure/Zeiss.Products.Infrastructure --startup-project /src/src/Presentation/Zeiss.Products.WebApi
+      "
+
+  # Seeds the database (postgres) if 'run_migrations' completes with success
+  seed_postgress:
+    container_name: seed_postgress
+    image: postgres:15-alpine
+    depends_on:
+      run_migrations:
+        condition: service_completed_successfully
+    environment:
+      PGPASSWORD: "ze1s<s>-pr0ds"
+    volumes:
+      - ./data:/data
+    entrypoint: >
+      bash -c "for f in /data/*.sql; do
+                  echo Running $$f;
+                  psql -h postgres -U ze1ss -d zeiss-products -f \"$$f\";
+               done"
   
   rabbitmq:
     container_name: rabbitmq
