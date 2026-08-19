@@ -1,0 +1,70 @@
+﻿services:
+  postgres:
+    container_name: postgres
+    image: postgres:15-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: "zeiss-products"
+      POSTGRES_USER: "ze1ss"
+      POSTGRES_PASSWORD: "ze1s<s>-pr0ds"
+    shm_size: 128mb
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    restart: always
+  
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:4.0-alpine
+    environment:
+      RABBITMQ_DEFAULT_USER: "ze1s"
+      RABBITMQ_DEFAULT_PASS: "ze-rabbit"
+    ports:
+      - "5672:5672"
+    volumes:
+      - rabbitmq:/var/lib/rabbitmq/
+      - rabbitmq:/var/log/rabbitmq
+    restart: always
+  
+  elasticsearch:
+    container_name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.2.0
+    ports:
+      - "9200:9200"
+    environment:
+        - node.name=es01
+        - discovery.type=single-node
+        - xpack.security.enabled=false
+        - ingest.geoip.downloader.enabled=false
+        - ELASTIC_USERNAME=ze1ss
+        - ELASTIC_PASSWORD=ze-l4ast1c
+        - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
+    volumes:
+      - elastic:/usr/share/elasticsearch/data
+    restart: always
+
+  redis:
+    container_name: redis
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/users.acl:/usr/local/etc/redis/users.acl:ro
+      - redis:/data
+    command: >
+      redis-server
+      --aclfile /usr/local/etc/redis/users.acl
+      --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "--user", "appuser", "--pass", "ze1ss<caching>-sync", "--no-auth-warning", "ping"]
+    restart: always
+    
+volumes:
+  postgres:
+    driver: local
+  rabbitmq:
+    driver: local
+  elastic:
+    driver: local
+  redis:
+    driver: local
