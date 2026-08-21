@@ -32,11 +32,12 @@ public class DeleteProductTests : IClassFixture<CustomWebApplicationFactory>
             false,
             DateTime.UtcNow,
             null,
+            null,
             null
         );
 
         _factory.ProductRepositoryMock.Setup(x =>
-            x.GetByIdAsync(100_001, It.IsAny<CancellationToken>())
+            x.GetAsync(100_001, It.IsAny<CancellationToken>())
         ).ReturnsAsync(product);
 
         // Act

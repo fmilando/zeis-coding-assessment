@@ -24,5 +24,9 @@ internal sealed class CreateProductCommandValidator : AbstractValidator<CreatePr
         RuleFor(x => x.Description)
             .MaximumLength(ProductConstants.DescriptionMaxLength)
             .WithName(nameof(CreateProductCommand.Description));
+        
+        RuleFor(x => x.Quantity)
+            .Must(x => x is null or >= 0)
+            .WithName(nameof(CreateProductCommand.Quantity));
     }
 }

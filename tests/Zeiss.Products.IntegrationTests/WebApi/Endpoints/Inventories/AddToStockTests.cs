@@ -23,7 +23,7 @@ public class AddToStockTests : IClassFixture<CustomWebApplicationFactory>
     {
         // Arrange
         _factory.InventoryRepositoryMock
-            .Setup(x => x.GetAsync(100_099, It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetByProductIdAsync(100_099, It.IsAny<CancellationToken>()))
             .ReturnsAsync((Inventory?)null);
 
         // Act

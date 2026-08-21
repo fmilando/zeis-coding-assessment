@@ -7,13 +7,5 @@ internal sealed class GetProductsQueryValidator : AbstractValidator<GetProductsQ
     public GetProductsQueryValidator()
     {
         Include(new PaginatedQueryValidator());
-        RuleFor(x => x.PageNumber)
-            .GreaterThan(0)
-            .WithName(nameof(GetProductsQuery.PageNumber));
-
-        RuleFor(x => x.PageSize)
-            .GreaterThan(0)
-            .LessThanOrEqualTo(100)
-            .WithName(nameof(GetProductsQuery.PageSize));
     }
 }

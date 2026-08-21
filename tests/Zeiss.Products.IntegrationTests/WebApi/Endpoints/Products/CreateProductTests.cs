@@ -42,6 +42,7 @@ public class CreateProductTests : IClassFixture<CustomWebApplicationFactory>
             false,
             DateTime.UtcNow,
             null,
+            null, 
             null);
 
         _factory.ProductRepositoryMock.Setup(x =>

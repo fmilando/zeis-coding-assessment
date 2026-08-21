@@ -1,9 +1,13 @@
+using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
+using Zeiss.Products.Application.Features;
 using Zeiss.Products.Application.Interfaces;
 using Zeiss.Products.Application.Results;
 using Zeiss.Products.WebApi.Helpers;
+using Zeiss.Products.WebApi.Security;
 
 namespace Zeiss.Products.WebApi.Filters;
 
@@ -14,8 +18,11 @@ internal sealed class IdempotencyFilter(IIdempotencyGuard guard) : IEndpointFilt
         EndpointFilterDelegate next
     )
     {
+        //TODO: Fix THIS
+        return await next(context);
+        
         var cancellationToken = context.HttpContext.RequestAborted;
-        var userId = GetUserId(context.HttpContext.Request);
+        var userId = GetUserUniqueId(context.HttpContext.User);
         var endpoint = HttpContextHelper.GetRequestEndpoint(context.HttpContext);
         var content = await GetRequestBodyAsync(
             context.HttpContext.Request,
@@ -27,16 +34,11 @@ internal sealed class IdempotencyFilter(IIdempotencyGuard guard) : IEndpointFilt
             endpoint,
             content);
 
-        var resultKey = $"idempotency:result:{fingerprint}";
         var lockKey = $"idempotency:lock:{fingerprint}";
-
-        var cached = await guard.GetValueAsync(resultKey, cancellationToken);
-
-        if (cached is not null)
-        {
-            return Results.Json(cached);
-        }
-
+        var resultKey = $"idempotency:result:{fingerprint}";
+        
+        var requestStatus = await guard.GetValueAsync(resultKey, cancellationToken);
+        
         var (success, lockId) = await guard.TryLockAsync(lockKey, cancellationToken);
 
         if (success)
@@ -45,33 +47,25 @@ internal sealed class IdempotencyFilter(IIdempotencyGuard guard) : IEndpointFilt
             {
                 var response = await next(context);
 
-                if (response is not IStatusCodeHttpResult { StatusCode: StatusCodes.Status200OK })
+                if (response is not IStatusCodeHttpResult { StatusCode: >= 200 and <= 299 })
                 {
                     await guard.UnlockAsync(lockKey, lockId!.Value, cancellationToken);
                 }
-                else
-                {
-                    var cacheData = JsonSerializer.Serialize(response);
-                    await guard.SetValueAsync(
-                        resultKey,
-                        cacheData,
-                        TimeSpan.FromSeconds(30),
-                        cancellationToken);
-                }
-
+                
                 return response;
             }
-            finally
+            catch
             {
                 await guard.UnlockAsync(lockKey, lockId!.Value, cancellationToken);
+                throw;
             }
         }
 
         var error = new Error(
-            "DUPLICATE_REQUEST",
+            ErrorCodes.DuplicateRequest,
             "An identical request is being processed.");
 
-        var result = new Result<string>([error]);
+        Result<string> result = error;
         return Results.Conflict(result);
     }
 
@@ -87,13 +81,9 @@ internal sealed class IdempotencyFilter(IIdempotencyGuard guard) : IEndpointFilt
         return content;
     }
 
-    private static string GetUserId(HttpRequest request)
+    private static string GetUserUniqueId(ClaimsPrincipal user)
     {
-        var token = request.Headers.Authorization.FirstOrDefault(x =>
-            x is null || x.StartsWith("bearer", StringComparison.OrdinalIgnoreCase)
-        ) ?? "anonymous";
-
-        return token.Split(" ").Last();
+        return user.Claims.First(x => x.Type == JwtSettings.UserUniqueIdClaimName).Value;
     }
 
     private static string GenerateRequestFingerprint(

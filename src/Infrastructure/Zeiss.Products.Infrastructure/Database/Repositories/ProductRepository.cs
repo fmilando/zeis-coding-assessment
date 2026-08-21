@@ -1,17 +1,16 @@
 using Microsoft.EntityFrameworkCore;
 using Zeiss.Products.Application.Interfaces.Repositories;
 using Zeiss.Products.Domain.Entities;
-using Zeiss.Products.Infrastructure.Database;
 using Zeiss.Products.Infrastructure.Mappers;
 
-namespace Zeiss.Products.Infrastructure.Repositories;
+namespace Zeiss.Products.Infrastructure.Database.Repositories;
 
 internal sealed class ProductRepository(PersistenceDbContext context) : IProductRepository
 {
-    public async Task<Product?> GetByIdAsync(long id, CancellationToken cancellationToken)
+    public async Task<Product?> GetAsync(int id, CancellationToken cancellationToken)
     {
         var entity = await context.Products.FindAsync(id, cancellationToken);
-        return ProductEntityMapper.Map(entity);
+        return entity.ToDomainEntity();
     }
 
     public async Task<Product?> GetBySkuAsync(string sku, CancellationToken cancellationToken)
@@ -19,18 +18,18 @@ internal sealed class ProductRepository(PersistenceDbContext context) : IProduct
         var entity = await context.Products.FirstOrDefaultAsync(
             x => x.Sku == sku,
             cancellationToken);
-        return ProductEntityMapper.Map(entity);
+        return entity.ToDomainEntity();
     }
 
     public async Task<Product> AddAsync(Product product, CancellationToken cancellationToken)
     {
-        var entity = ProductEntityMapper.Map(product);
+        var entity = ProductEntityMapper.ToEntity(product);
         context.Products.Add(entity);
 
         var result = await context.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
-        return ProductEntityMapper.Map(result.Entity)!;
+        return result.Entity.ToDomainEntity()!;
     }
 
     public async Task<Product> UpdateAsync(Product product, CancellationToken cancellationToken)

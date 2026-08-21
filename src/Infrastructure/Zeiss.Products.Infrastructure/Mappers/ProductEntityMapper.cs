@@ -5,7 +5,7 @@ namespace Zeiss.Products.Infrastructure.Mappers;
 
 internal static class ProductEntityMapper
 {
-    public static ProductEntity Map(Product entity) => new()
+    public static ProductEntity ToEntity(this Product entity) => new()
     {
         Id = entity.Id,
         Name = entity.Name,
@@ -16,10 +16,11 @@ internal static class ProductEntityMapper
         IsDeleted = entity.IsDeleted,
         CreatedAt = entity.CreatedAt,
         UpdatedAt = entity.UpdatedAt,
-        DeletedAt = entity.DeletedAt
+        DeletedAt = entity.DeletedAt,
+        Inventory = entity.Inventory.ToEntity()
     };
 
-    public static Product? Map(ProductEntity? entity) => entity switch
+    public static Product? ToDomainEntity(this ProductEntity? entity) => entity switch
     {
         null => null,
         _ => new Product(
@@ -32,7 +33,8 @@ internal static class ProductEntityMapper
             entity.IsDeleted,
             entity.CreatedAt,
             entity.UpdatedAt,
-            entity.DeletedAt
+            entity.DeletedAt,
+            entity.Inventory.ToDomainEntity()
         )
     };
 }

@@ -1,3 +1,6 @@
+-- delete all data from the table
+TRUNCATE TABLE "Products";
+
 -- seed for products table --
 INSERT INTO "Products"("Name", "Sku", "Description", "Price", "IsActive", "IsDeleted", "CreatedAt")
 SELECT 'Athletic Ankle Socks', 'ATHL-0001', '6-pack moisture-wicking cushioned socks', 18.8, TRUE, FALSE, NOW()

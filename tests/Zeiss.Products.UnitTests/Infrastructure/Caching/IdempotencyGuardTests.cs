@@ -21,7 +21,7 @@ public sealed class IdempotencyGuardTests
         _settings = new RedisSettings
         {
             ConnectionString = _faker.Internet.Url(),
-            RecordRetentionInSeconds = _faker.Random.Int(30, 300)
+            IdempotencyLockRetentionInSeconds = _faker.Random.Int(30, 300)
         };
 
         _redisMock.Setup(redis =>
@@ -127,7 +127,7 @@ public sealed class IdempotencyGuardTests
             .Setup(db => db.LockTakeAsync(
                 It.Is<RedisKey>(k => k == key),
                 It.IsAny<RedisValue>(),
-                TimeSpan.FromSeconds(_settings.RecordRetentionInSeconds),
+                TimeSpan.FromSeconds(_settings.IdempotencyLockRetentionInSeconds),
                 CommandFlags.None))
             .ReturnsAsync(true);
 
@@ -149,7 +149,7 @@ public sealed class IdempotencyGuardTests
             .Setup(db => db.LockTakeAsync(
                 It.Is<RedisKey>(k => k == key),
                 It.IsAny<RedisValue>(),
-                TimeSpan.FromSeconds(_settings.RecordRetentionInSeconds),
+                TimeSpan.FromSeconds(_settings.IdempotencyLockRetentionInSeconds),
                 CommandFlags.None))
             .ReturnsAsync(false);
 

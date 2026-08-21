@@ -1,6 +1,10 @@
+using MediatR;
+using Zeiss.Products.Application.Features.Products.Queries;
+using Zeiss.Products.Application.Results;
+
 namespace Zeiss.Products.Application.Features.Inventories.Commands.AddToStock;
 
 public sealed record AddToStockCommand(
-    long ProductId,
+    int ProductId,
     int Quantity
-) : BaseCommand(ProductId);
+) : IRequest<Result<ProductInventoryReadModel>>;

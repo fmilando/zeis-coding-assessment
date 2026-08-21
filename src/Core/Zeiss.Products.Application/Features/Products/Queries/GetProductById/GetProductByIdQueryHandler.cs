@@ -1,13 +1,13 @@
-using Zeiss.Products.Application.Interfaces.Handlers;
+using MediatR;
 using Zeiss.Products.Application.Results;
 
 namespace Zeiss.Products.Application.Features.Products.Queries.GetProductById;
 
 internal sealed class GetProductByIdQueryHandler(
     IProductInventoryReadRepository repository
-) : IRequestHandler<GetProductByIdQuery, GetProductByIdResult>
+) : IRequestHandler<GetProductByIdQuery, Result<ProductInventoryReadModel>>
 {
-    public async Task<Result<GetProductByIdResult>> HandleAsync(
+    public async Task<Result<ProductInventoryReadModel>> Handle(
         GetProductByIdQuery request,
         CancellationToken cancellationToken)
     {
@@ -15,13 +15,12 @@ internal sealed class GetProductByIdQueryHandler(
 
         if (model is not null)
         {
-            return new GetProductByIdResult(model);
+            return model;
         }
 
-        var error = new Error(
-            ErrorCodes.ProductNotFound,
-            $"Product {request.ProductId} not found");
-
-        return new Result<GetProductByIdResult>([error]);
+        return new Error(
+            ErrorCodes.Product.NotFound,
+            $"Product {request.ProductId} not found"
+        );
     }
 }

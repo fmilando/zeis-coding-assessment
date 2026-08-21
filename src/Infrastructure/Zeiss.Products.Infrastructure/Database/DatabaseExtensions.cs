@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Zeiss.Products.Application.Features.Accounts.Queries.ValidateCredentials;
 using Zeiss.Products.Application.Features.Products.Queries;
 using Zeiss.Products.Application.Interfaces.Repositories;
-using Zeiss.Products.Infrastructure.Repositories;
+using Zeiss.Products.Infrastructure.Database.Repositories;
 
 namespace Zeiss.Products.Infrastructure.Database;
 
@@ -24,6 +25,8 @@ internal static class DatabaseExtensions
                 .AddScoped<IDbConnectionFactory, NpgsqlConnectionFactory>()
                 .AddScoped<IProductRepository, ProductRepository>()
                 .AddScoped<IInventoryRepository, InventoryRepository>()
+                .AddScoped<IAccountReadRepository, AccountReadRepository>()
+                .AddScoped<IUnitOfWork, UnitOfWork>()
                 .AddScoped<IProductInventoryReadRepository, ProductInventoryReadRepository>()
                 .AddScoped<DbErrorInterceptor>();
     }

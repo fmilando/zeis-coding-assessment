@@ -3,16 +3,16 @@ using Zeiss.Products.Domain.Exceptions;
 
 namespace Zeiss.Products.Domain.Entities;
 
-public sealed class Inventory : Entity<long>
+public sealed record Inventory : Entity<int>
 {
-    public long ProductId { get; }
+    public int ProductId { get; }
     public int Quantity { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime? UpdatedAt { get; private set; }
 
     public Inventory(
-        long id,
-        long productId,
+        int id,
+        int productId,
         int quantity,
         DateTime createdAt,
         DateTime? updatedAt) : base(id)
@@ -23,7 +23,7 @@ public sealed class Inventory : Entity<long>
         UpdatedAt = updatedAt;
     }
 
-    public Inventory(long productId, int quantity)
+    public Inventory(int productId, int quantity)
         : this(0, productId, quantity, DateTime.UtcNow, null)
     { }
 

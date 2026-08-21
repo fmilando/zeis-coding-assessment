@@ -5,16 +5,20 @@ namespace Zeiss.Products.Infrastructure.Mappers;
 
 internal static class InventoryEntityMapper
 {
-    public static InventoryEntity Map(Inventory entity) => new()
+    public static InventoryEntity? ToEntity(this Inventory? entity) => entity switch
     {
-        Id = entity.Id,
-        ProductId = entity.ProductId,
-        Quantity = entity.Quantity,
-        CreatedAt = entity.CreatedAt,
-        UpdatedAt = entity.UpdatedAt ?? entity.CreatedAt
+        null => null,
+        _ => new InventoryEntity()
+        {
+            Id = entity.Id,
+            ProductId = entity.ProductId,
+            Quantity = entity.Quantity,
+            CreatedAt = entity.CreatedAt,
+            UpdatedAt = entity.UpdatedAt ?? entity.CreatedAt
+        }
     };
 
-    public static Inventory? Map(InventoryEntity? entity) => entity switch
+    public static Inventory? ToDomainEntity(this InventoryEntity? entity) => entity switch
     {
         null => null,
         _ => new Inventory(

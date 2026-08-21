@@ -35,7 +35,7 @@ internal sealed class IdempotencyGuard(
         var success = await cache.LockTakeAsync(
             key,
             lockId.ToString(),
-            TimeSpan.FromSeconds(settings.Value.RecordRetentionInSeconds));
+            TimeSpan.FromHours(24));
 
         if (success is false)
         {

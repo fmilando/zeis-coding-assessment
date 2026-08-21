@@ -2,18 +2,19 @@
   postgres:
     container_name: postgres
     image: postgres:15-alpine
+    profiles: ["infra"]
     ports:
-      - "5432:5432"
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"
     environment:
-      POSTGRES_DB: "zeiss-products"
-      POSTGRES_USER: "ze1ss"
-      POSTGRES_PASSWORD: "ze1s<s>-pr0ds"
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASS}"
     shm_size: 128mb
     volumes:
       - postgres:/var/lib/postgresql/data
     restart: always
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ze1ss -d zeiss-products"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -23,11 +24,12 @@
   run_migrations:
     container_name: run_migrations
     image: mcr.microsoft.com/dotnet/sdk:10.0
+    profiles: ["infra"]
     working_dir: /src
     volumes:
       - ./:/src
     environment:
-      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=zeiss-products;Username=ze1ss;Password=ze1s<s>-pr0ds"
+      ConnectionStrings__Postgres: "Host=postgres;Port=${POSTGRES_PORT};Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASS}"
     depends_on:
       postgres:
         condition: service_healthy
@@ -43,27 +45,29 @@
   seed_postgress:
     container_name: seed_postgress
     image: postgres:15-alpine
+    profiles: ["infra"]
     depends_on:
       run_migrations:
         condition: service_completed_successfully
     environment:
-      PGPASSWORD: "ze1s<s>-pr0ds"
+      PGPASSWORD: "${POSTGRES_PASS}"
     volumes:
-      - ./data:/data
+      - ./dev-data/sql:/data
     entrypoint: >
       bash -c "for f in /data/*.sql; do
                   echo Running $$f;
-                  psql -h postgres -U ze1ss -d zeiss-products -f \"$$f\";
+                  psql -h postgres -U ${POSTGRES_USER} -d ${POSTGRES_DB} -f \"$$f\";
                done"
   
   rabbitmq:
     container_name: rabbitmq
     image: rabbitmq:4.0-alpine
+    profiles: ["infra"]
     environment:
-      RABBITMQ_DEFAULT_USER: "ze1s"
-      RABBITMQ_DEFAULT_PASS: "ze-rabbit"
+      RABBITMQ_DEFAULT_USER: "${RABBITMQ_USER}"
+      RABBITMQ_DEFAULT_PASS: "${RABBITMQ_PASS}"
     ports:
-      - "5672:5672"
+      - "${RABBITMQ_PORT}:${RABBITMQ_PORT}"
     volumes:
       - rabbitmq:/var/lib/rabbitmq/
       - rabbitmq:/var/log/rabbitmq
@@ -72,15 +76,16 @@
   elasticsearch:
     container_name: elasticsearch
     image: docker.elastic.co/elasticsearch/elasticsearch:8.2.0
+    profiles: ["infra"]
     ports:
-      - "9200:9200"
+      - "${ELASTIC_PORT}:${ELASTIC_PORT}"
     environment:
         - node.name=es01
         - discovery.type=single-node
         - xpack.security.enabled=false
         - ingest.geoip.downloader.enabled=false
-        - ELASTIC_USERNAME=ze1ss
-        - ELASTIC_PASSWORD=ze-l4ast1c
+        - ELASTIC_USERNAME=${ELASTIC_USER}
+        - ELASTIC_PASSWORD=${ELASTIC_PASS}
         - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
     volumes:
       - elastic:/usr/share/elasticsearch/data
@@ -89,45 +94,48 @@
   redis:
     container_name: redis
     image: redis:6-alpine
+    profiles: ["infra"]
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
-      - ./redis/users.acl:/usr/local/etc/redis/users.acl:ro
+      - ./dev-data/redis/users.acl:/usr/local/etc/redis/users.acl:ro
       - redis:/data
     command: >
       redis-server
       --aclfile /usr/local/etc/redis/users.acl
       --appendonly yes
     healthcheck:
-      test: ["CMD", "redis-cli", "--user", "appuser", "--pass", "ze1ss<caching>-sync", "--no-auth-warning", "ping"]
+      test: ["CMD", "redis-cli", "--user", "${REDIS_USER}", "--pass", "${REDIS_PASS}", "--no-auth-warning", "ping"]
     restart: always
     
   webapi:
     container_name: webapi
+    profiles: ["api"]
     build:
       context: .
       dockerfile: src/Presentation/Zeiss.Products.WebApi/Dockerfile
     ports:
-      - "5056:5056"
-      - "7192:7192"
+      - "${WEBAPI_HTTP_PORT}:${WEBAPI_HTTP_PORT}"
+      - "${WEBAPI_HTTPS_PORT}:${WEBAPI_HTTPS_PORT}"
     environment:
-      #ASPNETCORE_URLS: "http://0.0.0.0:5056;https://0.0.0.0:7192"
-      ASPNETCORE_URLS: "http://0.0.0.0:5056"
-      ASPNETCORE_HTTP_PORTS: 5056
-      ConnectionStrings__Postgres: "Host=postgres;Port=5432;Database=zeiss-products;Username=ze1ss;Password=ze1s<s>-pr0ds"
-      Jwt__SecretKey: "emdlLzUtUxchhbGxlbmdlLzUtY2WNvZGUUxchhbGx"
-      Jwt__Issuer: "Docker - Zeiss Products"
-      Jwt__Audience: "zeiss-clients"
-      Jwt__TokenExpirationMinutes: 15
+      ASPNETCORE_URLS: "http://0.0.0.0:${WEBAPI_HTTP_PORT};https://0.0.0.0:${WEBAPI_HTTPS_PORT}"
+      ASPNETCORE_HTTP_PORTS: ${WEBAPI_HTTP_PORT},${WEBAPI_HTTPS_PORT}
+      ASPNETCORE_Kestrel__Certificates__Default__Path: ${WEBAPI_HTTPS_CERT_PATH}
+      ASPNETCORE_Kestrel__Certificates__Default__Password: ${WEBAPI_HTTPS_CERT_PASS}
+      ConnectionStrings__Postgres: "Host=postgres;Port=${POSTGRES_PORT};Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASS}"
+      Jwt__SecretKey: ${WEBAPI_JWT_SECRETKEY}
+      Jwt__Issuer: ${WEBAPI_JWT_ISSUER}
+      Jwt__Audience: ${WEBAPI_JWT_AUDIENCE}
+      Jwt__TokenExpirationMinutes: ${WEBAPI_JWT_EXP_MIN}
       RabbitMq__Host: rabbitmq
-      RabbitMq__Port: 5672
-      RabbitMq__VirtualHost: "/"
-      RabbitMq__Username: "ze1s"
-      RabbitMq__Password: "ze-rabbit"
-      Redis__ConnectionString: "redis:6379,user=appuser,password=ze1ss<caching>-sync,Ssl=False,abortConnect=False"
+      RabbitMq__Port: ${RABBITMQ_PORT}
+      RabbitMq__VirtualHost: ${RABBITMQ_VHOST}
+      RabbitMq__Username: ${RABBITMQ_USER}
+      RabbitMq__Password: ${RABBITMQ_PASS}
+      Redis__ConnectionString: "redis:${REDIS_PORT},user=${REDIS_USER},password=${REDIS_PASS},Ssl=False,abortConnect=False"
       Redis__RecordRetentionInSeconds: 30
-      Elasticsearch__Uri: 
-      Elasticsearch__IndexFormat: "ze-docker-product-logs-{0:yyyy.MM.dd}"
+      Elasticsearch__Uri: http://localhost:${ELASTIC_PORT}
+      Elasticsearch__IndexFormat: ${ELASTIC_INDEX_FORMAT}
     
 volumes:
   postgres:

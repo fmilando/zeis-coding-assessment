@@ -228,10 +228,10 @@ I opted to create a lightweight custom `IRequestDispatcher` to trigger the execu
 HTTP Request
    → Minimal API Endpoint
    → IdempotencyCheckFilter (Redis lock via fingerprint calculation)
-   → IRequestDispatcher.DispatchAsync<TCommand, TResult>()
+   → ISender.SendAsync<TCommand, TResult>() <MediatR>
    → IRequestHandler<TCommand, TResult>.HandleAsync()
    → Domain entity mutation + domain events raised
-   → IUnitOfWork.CommitAsync() — EF Core saves and MassTransit Outbox enqueues events
+   → IUnitOfWork.CompleteAsync() — EF Core saves and MassTransit Outbox enqueues events
    → MassTransit background worker publishes events to RabbitMQ
 ```
 
@@ -568,12 +568,14 @@ docker compose up --build
 ```
 
 ### 6. Database seed
-The root of the solution has the `./data/` folder which contains SQL scripts to seed the database.
+The root of the solution has the `./dev-data/sql` folder which contains SQL scripts to seed the database.
 
 | File                    | Description                               |
 |-------------------------|-------------------------------------------|
 | `01-products-seed.sql`  | Inserts 500 products for testing.         |
 | `02-inventory-seed.sql` | Assigns random quantity for each product. |
+| `03-accounts-seed.sql` | Generates 50 accounts to authenticate Web API. |
+
 
 Once the database has been lifted using `docker compose`, the `run_migrations` service will run to apply migrations
 to the database and `seed_postgres` runs afterwards to seed the database using the scripts above.

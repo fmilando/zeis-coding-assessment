@@ -1,13 +1,13 @@
-using Zeiss.Products.Application.Interfaces.Handlers;
+using MediatR;
 using Zeiss.Products.Application.Results;
 
 namespace Zeiss.Products.Application.Features.Products.Queries.GetByStockLevel;
 
 internal sealed class GetByStockLevelQueryHandler(
     IProductInventoryReadRepository repository
-) : IRequestHandler<GetByStockLevelQuery, GetByStockLevelResult>
+) : IRequestHandler<GetByStockLevelQuery, Result<GetByStockLevelResult>>
 {
-    public async Task<Result<GetByStockLevelResult>> HandleAsync(
+    public async Task<Result<GetByStockLevelResult>> Handle(
         GetByStockLevelQuery request,
         CancellationToken cancellationToken)
     {
@@ -18,10 +18,8 @@ internal sealed class GetByStockLevelQueryHandler(
             request.PageSize,
             cancellationToken);
 
-        var result = new GetByStockLevelResult(
+        return new GetByStockLevelResult(
             pagedResult.Result,
-            pagedResult.PaginationInfo);
-
-        return new Result<GetByStockLevelResult>(result);
+            pagedResult.Metadata);
     }
 }

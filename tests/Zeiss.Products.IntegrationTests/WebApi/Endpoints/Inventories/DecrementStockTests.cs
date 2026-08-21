@@ -23,7 +23,7 @@ public class DecrementStockTests : IClassFixture<CustomWebApplicationFactory>
     {
         // Arrange
         _factory.InventoryRepositoryMock
-            .Setup(x => x.GetAsync(99, It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetByProductIdAsync(999000, It.IsAny<CancellationToken>()))
             .ReturnsAsync((Inventory?)null);
 
         // Act

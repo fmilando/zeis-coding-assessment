@@ -24,7 +24,7 @@ internal static class HealthCheckExtensions
                 configuration.GetConnectionString(DbConstants.ConnectionStringName)!,
             name: "postgres-db", tags: tags);
 
-        healthChecks.AddRabbitMQ(provider =>
+        healthChecks.AddRabbitMQ(_ =>
         {
             var settings = configuration.GetRequiredSection(RabbitMqSettings.SectionName).Get<RabbitMqSettings>()!;
             return new ConnectionFactory

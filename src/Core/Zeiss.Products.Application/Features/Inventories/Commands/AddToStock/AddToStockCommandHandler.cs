@@ -1,4 +1,7 @@
+using System.Data;
+using MediatR;
 using Zeiss.Products.Application.Features.Products.Commands;
+using Zeiss.Products.Application.Features.Products.Queries;
 using Zeiss.Products.Application.Interfaces.Messaging;
 using Zeiss.Products.Application.Interfaces.Repositories;
 using Zeiss.Products.Application.Results;
@@ -8,18 +11,25 @@ using Zeiss.Products.Domain.Events;
 namespace Zeiss.Products.Application.Features.Inventories.Commands.AddToStock;
 
 internal sealed class AddToStockCommandHandler(
+    IUnitOfWork unitOfWork,
     IProductRepository products,
     IInventoryRepository inventories,
     IEventPublisher publisher
-) : BaseCommandHandler<AddToStockCommand, AddToStockResult>(products)
+) : IRequestHandler<AddToStockCommand, Result<ProductInventoryReadModel>>
 {
-    protected override async Task<Result<AddToStockResult>> HandleAsync(
+    public async Task<Result<ProductInventoryReadModel>> Handle(
         AddToStockCommand request,
-        Product product,
         CancellationToken cancellationToken)
     {
-        await inventories.StartAsync(cancellationToken);
-        var inventory = await inventories.GetAsync(request.ProductId, cancellationToken);
+        await unitOfWork.StartAsync(IsolationLevel.RepeatableRead, cancellationToken);
+        var product = await products.GetAsync(request.ProductId, cancellationToken);
+
+        if (product is null)
+        {
+            return new Error(ErrorCodes.Product.NotFound, "Product not found");
+        }
+
+        var inventory = product.Inventory ?? await inventories.GetByProductIdAsync(request.ProductId, cancellationToken);
         DomainEvent @event;
 
         if (inventory is null)
@@ -38,13 +48,12 @@ internal sealed class AddToStockCommandHandler(
             @event = inventory.Events.First();
         }
 
-        await inventories.CompleteAsync(cancellationToken);
-
+        await unitOfWork.CompleteAsync(cancellationToken);
         await publisher.PublishAsync(@event, cancellationToken);
         inventory.ClearEvents();
 
         var model = ProductInventoryReadModelMapper.Map(product, inventory);
-        var result = new AddToStockResult(model);
-        return new Result<AddToStockResult>(result);
+
+        return model;
     }
 }

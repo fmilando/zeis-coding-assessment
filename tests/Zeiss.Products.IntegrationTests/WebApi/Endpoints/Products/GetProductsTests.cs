@@ -5,16 +5,14 @@ namespace Zeiss.Products.IntegrationTests.WebApi.Endpoints.Products;
 
 public class GetProductsTests : IClassFixture<CustomWebApplicationFactory>
 {
-    private readonly CustomWebApplicationFactory _factory;
     private readonly HttpClient _client;
 
     public GetProductsTests(CustomWebApplicationFactory factory)
     {
-        _factory = factory;
         _client = factory.CreateClient();
 
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
-        _factory.ProductRepositoryMock.Invocations.Clear();
+        factory.ProductRepositoryMock.Invocations.Clear();
     }
 
     [Fact]

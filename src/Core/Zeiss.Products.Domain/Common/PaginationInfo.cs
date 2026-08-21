@@ -2,7 +2,7 @@ using Zeiss.Products.Domain.Extensions;
 
 namespace Zeiss.Products.Domain.Common;
 
-public record PaginationInfo(
+public sealed record PaginationInfo(
     int? PageNumber,
     int? PageSize,
     int? TotalPages,

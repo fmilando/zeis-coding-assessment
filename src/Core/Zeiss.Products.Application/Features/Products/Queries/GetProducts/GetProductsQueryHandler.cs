@@ -1,13 +1,13 @@
-using Zeiss.Products.Application.Interfaces.Handlers;
+using MediatR;
 using Zeiss.Products.Application.Results;
 
 namespace Zeiss.Products.Application.Features.Products.Queries.GetProducts;
 
 internal sealed class GetProductsQueryHandler(
     IProductInventoryReadRepository repository
-) : IRequestHandler<GetProductsQuery, GetProductsResult>
+) : IRequestHandler<GetProductsQuery, Result<GetProductsResult>>
 {
-    public async Task<Result<GetProductsResult>> HandleAsync(
+    public async Task<Result<GetProductsResult>> Handle(
         GetProductsQuery query,
         CancellationToken cancellationToken)
     {
@@ -16,10 +16,8 @@ internal sealed class GetProductsQueryHandler(
             query.PageSize,
             cancellationToken);
 
-        var result = new GetProductsResult(
+        return new GetProductsResult(
             pagedResult.Result,
-            pagedResult.PaginationInfo);
-
-        return new Result<GetProductsResult>(result);
+            pagedResult.Metadata);
     }
 }

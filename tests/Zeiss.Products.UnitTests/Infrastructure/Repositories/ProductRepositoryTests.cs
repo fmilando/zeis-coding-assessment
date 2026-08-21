@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Zeiss.Products.Domain.Entities;
 using Zeiss.Products.Infrastructure.Database;
-using Zeiss.Products.Infrastructure.Repositories;
+using Zeiss.Products.Infrastructure.Database.Repositories;
 
 namespace Zeiss.Products.UnitTests.Infrastructure.Repositories;
 
@@ -70,7 +70,7 @@ public sealed class ProductRepositoryTests : IDisposable
         var added = await _products.AddAsync(product, CancellationToken.None);
 
         // Act
-        var result = await _products.GetByIdAsync(added.Id, CancellationToken.None);
+        var result = await _products.GetAsync(added.Id, CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);
@@ -83,10 +83,10 @@ public sealed class ProductRepositoryTests : IDisposable
     public async Task GetByIdAsync_WhenProductDoesNotExist_ShouldReturnNull()
     {
         // Arrange
-        var nonExistentId = _faker.Random.Long(9999, 99999);
+        var nonExistentId = _faker.Random.Int(100_000, 999_000);
 
         // Act
-        var result = await _products.GetByIdAsync(nonExistentId, CancellationToken.None);
+        var result = await _products.GetAsync(nonExistentId, CancellationToken.None);
 
         // Assert
         Assert.Null(result);
@@ -143,6 +143,7 @@ public sealed class ProductRepositoryTests : IDisposable
             false,
             added.CreatedAt,
             DateTime.UtcNow,
+            null,
             null);
 
         // Act
@@ -180,7 +181,8 @@ public sealed class ProductRepositoryTests : IDisposable
             true,
             added.CreatedAt,
             deletedAt,
-            deletedAt);
+            deletedAt,
+            null);
 
         // Act
         await _products.DeleteAsync(productToDelete, CancellationToken.None);
@@ -195,17 +197,18 @@ public sealed class ProductRepositoryTests : IDisposable
         Assert.NotNull(inDb.DeletedAt);
     }
 
-    private Product CreateFakeProduct(long id = 0)
+    private Product CreateFakeProduct(int id = 0)
     {
         return new Product(
             id,
             _faker.Commerce.ProductName(),
             _faker.Commerce.Ean13(),
             _faker.Commerce.ProductDescription(),
-            _faker.Finance.Amount(1, 1000),
+            _faker.Finance.Amount(1, 1001),
             true,
             false,
             DateTime.UtcNow,
+            null,
             null,
             null);
     }

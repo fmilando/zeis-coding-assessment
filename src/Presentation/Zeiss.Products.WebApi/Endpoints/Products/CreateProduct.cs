@@ -1,6 +1,7 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Zeiss.Products.Application.Features;
 using Zeiss.Products.Application.Features.Products.Commands.CreateProduct;
-using Zeiss.Products.Application.Interfaces.Handlers;
 using Zeiss.Products.WebApi.Contracts;
 using Zeiss.Products.WebApi.Mappers;
 using ILogger = Serilog.ILogger;
@@ -10,7 +11,7 @@ namespace Zeiss.Products.WebApi.Endpoints.Products;
 internal static class CreateProduct
 {
     public static async Task<IResult> HandleAsync(
-        IRequestDispatcher dispatcher,
+        ISender sender,
         ILogger logger,
         [FromBody] CreateProductRequest request,
         HttpContext context)
@@ -19,11 +20,10 @@ internal static class CreateProduct
             request.Name,
             request.Sku,
             request.Description,
-            request.Price);
+            request.Price,
+            request.Quantity);
 
-        var result = await dispatcher.DispatchAsync<CreateProductCommand, CreateProductResult>(
-            command,
-            context.RequestAborted);
+        var result = await sender.Send(command, context.RequestAborted);
 
         var response = result.ToApiResponse();
 
@@ -34,10 +34,14 @@ internal static class CreateProduct
                 request.Sku,
                 result.Errors);
 
-            return Results.BadRequest(response);
+            var isConflict = result.Errors.Any(x => x.Code == ErrorCodes.Product.SkuConflict);
+            
+            return isConflict
+                ? Results.Conflict(response) 
+                : Results.BadRequest(response);
         }
 
-        logger.Information("Created product {ProductId}", result.Value!.Product.ProductId);
-        return Results.Created($"{EndpointExtensions.BaseEndpoint}/{result.Value!.Product.ProductId}", response);
+        logger.Information("Created product {ProductId}", result.Value!.ProductId);
+        return Results.Created($"{EndpointExtensions.BaseEndpoint}/{result.Value!.ProductId}", response);
     }
 }

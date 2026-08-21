@@ -2,6 +2,6 @@ namespace Zeiss.Products.Domain.Common;
 
 public record PagedQuery
 {
-    public int PageNumber { get; set; }
-    public int PageSize { get; set; }
+    public required int PageNumber { get; init; }
+    public required int PageSize { get; init; }
 }

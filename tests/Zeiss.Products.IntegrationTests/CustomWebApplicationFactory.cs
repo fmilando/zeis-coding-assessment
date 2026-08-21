@@ -29,7 +29,7 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>
             services.AddScoped(_ => EventPublisherMock.Object);
 
             services.AddAuthentication("Test")
-                .AddScheme<AuthenticationSchemeOptions, Auth.TestAuthHandler>("Test", options => { });
+                .AddScheme<AuthenticationSchemeOptions, Auth.TestAuthHandler>("Test", _ => { });
 
             services.AddAuthorization(options =>
             {

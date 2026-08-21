@@ -1,9 +1,14 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Zeiss.Products.Application.Features;
+using Zeiss.Products.Application.Features.Accounts.Queries.ValidateCredentials;
 using Zeiss.Products.WebApi.Contracts;
+using Zeiss.Products.WebApi.Mappers;
 using Zeiss.Products.WebApi.Security;
 using ILogger = Serilog.ILogger;
 
@@ -12,44 +17,53 @@ namespace Zeiss.Products.WebApi.Endpoints.Tokens;
 internal static class GetAccessToken
 {
     public static async Task<IResult> HandleAsync(
+        ISender sender,
         ILogger logger,
         IConfiguration configuration,
-        [FromBody] TokenRequest request)
+        [FromBody] TokenRequest request,
+        HttpContext context)
     {
-        if (AreCredentialsValid(request.SecretId, request.SecretKey) is false)
+        var query = new ValidateCredentialsQuery(request.ClientId, request.ClientSecret);
+        var result = await sender.Send(query, context.RequestAborted);
+
+        if (result.IsError)
         {
-            return Results.BadRequest(new
+            var response = result.ToApiResponse();
+            var isLocked = result.Errors.Any(x => x.Code == ErrorCodes.Account.Locked);
+            var isNotFound = result.Errors.Any(x => x.Code == ErrorCodes.Account.NotFound);
+
+            return (isLocked, isNotFound) switch
             {
-                message = "Provided credentials are not valid"
-            });
+                (true,_) => Results.Json(response, statusCode: 423),
+                (_,true) => Results.Json(response, statusCode: StatusCodes.Status401Unauthorized),
+                _ => Results.BadRequest(response)
+            };
         }
 
         var claims = new List<Claim>()
         {
-            new (JwtSettings.SecretIdClaimName, request.SecretId),
-            new (JwtSettings.SecretKeyClaimName, request.SecretKey),
+            new (JwtSettings.UserUniqueIdClaimName, GetUserUniqueId(request))
         };
 
         var (token, expiration) = IssueJwtToken(claims, configuration);
-        logger.Information("Issued access token for {SecretId}", request.SecretId);
+        logger.Information("Issued access token for {ClientId}", request.ClientId);
 
-        return Results.Ok(new { token, expiration });
+        return Results.Ok(new { token, expiration }.ToApiResponse());
     }
 
-    private static bool AreCredentialsValid(string secretId, string secretKey)
+    private static string GetUserUniqueId(TokenRequest request)
     {
-        //Check the credentials against an official authorized list of clients
-        //This could be a database or an API call.
-        return true;
+        var bytes = Encoding.UTF8.GetBytes($"{request.ClientId}:{request.ClientSecret}");
+        return Convert.ToHexStringLower(SHA256.HashData(bytes));
     }
-
-
+    
     private static (string Token, DateTime Expiration) IssueJwtToken(IEnumerable<Claim> claims, IConfiguration configuration)
     {
         var settings = configuration.GetSection(JwtSettings.SectionName).Get<JwtSettings>()!;
         var secretKey = Encoding.UTF8.GetBytes(settings.SecretKey);
         var expiration = DateTime.UtcNow.AddMinutes(settings.TokenExpirationMinutes);
-
+        var securityKey = new SymmetricSecurityKey(secretKey[..32]);
+        
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
@@ -58,12 +72,17 @@ internal static class GetAccessToken
             Issuer = settings.Issuer,
             Audience = settings.Audience,
             SigningCredentials = new SigningCredentials(
-                new SymmetricSecurityKey(secretKey),
-                SecurityAlgorithms.HmacSha256)
+                securityKey,
+                SecurityAlgorithms.HmacSha256),
+            EncryptingCredentials = new EncryptingCredentials(
+                securityKey,
+                SecurityAlgorithms.Aes256KW,
+                SecurityAlgorithms.Aes256CbcHmacSha512)
         };
 
         var handler = new JwtSecurityTokenHandler();
-        var token = handler.CreateToken(tokenDescriptor);
-        return (handler.WriteToken(token), expiration);
+        var jweToken = handler.CreateEncodedJwt(tokenDescriptor);
+        
+        return (jweToken, expiration);
     }
 }

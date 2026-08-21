@@ -1,8 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Zeiss.Products.Infrastructure.Database.Entities;
 
-namespace Zeiss.Products.Infrastructure.Database;
+namespace Zeiss.Products.Infrastructure.Database.Entities;
 
 internal sealed class InventoryEntityConfiguration : IEntityTypeConfiguration<InventoryEntity>
 {
@@ -10,10 +9,17 @@ internal sealed class InventoryEntityConfiguration : IEntityTypeConfiguration<In
     {
         builder.ToTable(DbConstants.InventorySchemaName);
         builder.HasKey(x => x.Id);
+        builder.HasAlternateKey(x => x.ProductId);
         builder.Property(x => x.Id)
                 .UseIdentityAlwaysColumn();
 
         builder.Property(x => x.ProductId)
                .IsRequired();
+
+        builder.Property(x => x.CreatedAt)
+               .ValueGeneratedOnAdd();
+
+        builder.Property(x => x.UpdatedAt)
+               .ValueGeneratedOnUpdate();
     }
 }

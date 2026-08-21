@@ -1,5 +1,5 @@
+using MediatR;
 using Zeiss.Products.Application.Features.Products.Queries.GetByStockLevel;
-using Zeiss.Products.Application.Interfaces.Handlers;
 using Zeiss.Products.WebApi.Contracts;
 using Zeiss.Products.WebApi.Mappers;
 using ILogger = Serilog.ILogger;
@@ -9,20 +9,18 @@ namespace Zeiss.Products.WebApi.Endpoints.Products;
 internal static class GetByStockLevel
 {
     public static async Task<IResult> HandleAsync(
-        IRequestDispatcher dispatcher,
+        ISender sender,
         ILogger logger,
         [AsParameters] StockLevelRequest request,
         HttpContext context)
     {
         var query = new GetByStockLevelQuery(request.Min, request.Max)
         {
-            PageNumber = request.Page ?? 1,
+            PageNumber = request.PageNumber ?? 1,
             PageSize = request.PageSize ?? ResponseConstants.DefaultPageSize
         };
 
-        var result = await dispatcher.DispatchAsync<GetByStockLevelQuery, GetByStockLevelResult>(
-            query,
-            context.RequestAborted);
+        var result = await sender.Send(query, context.RequestAborted);
 
         var response = result.ToApiResponse();
 

@@ -190,19 +190,54 @@ namespace Zeiss.Products.Infrastructure.Migrations
                     b.ToTable("OutboxStates");
                 });
 
-            modelBuilder.Entity("Zeiss.Products.Infrastructure.Entities.InventoryEntity", b =>
+            modelBuilder.Entity("Zeiss.Products.Infrastructure.Database.Entities.AccountEntity", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ClientId")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("ClientSecret")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("NOW()");
+
+                    b.Property<bool>("IsLocked")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Accounts", (string)null);
+                });
+
+            modelBuilder.Entity("Zeiss.Products.Infrastructure.Database.Entities.InventoryEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long>("ProductId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("Quantity")
                         .HasColumnType("integer");
@@ -212,17 +247,19 @@ namespace Zeiss.Products.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasAlternateKey("ProductId");
+
                     b.ToTable("Inventory", (string)null);
                 });
 
-            modelBuilder.Entity("Zeiss.Products.Infrastructure.Entities.ProductEntity", b =>
+            modelBuilder.Entity("Zeiss.Products.Infrastructure.Database.Entities.ProductEntity", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<long>("Id"));
-                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<long>("Id"), 100000L, null, null, 999999L, null, null);
+                    NpgsqlPropertyBuilderExtensions.UseIdentityAlwaysColumn(b.Property<int>("Id"));
+                    NpgsqlPropertyBuilderExtensions.HasIdentityOptions(b.Property<int>("Id"), 100000L, null, null, 999999L, null, null);
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
@@ -258,6 +295,9 @@ namespace Zeiss.Products.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Sku")
+                        .IsUnique();
+
                     b.ToTable("Products", (string)null);
                 });
 
@@ -271,6 +311,20 @@ namespace Zeiss.Products.Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("InboxMessageId", "InboxConsumerId")
                         .HasPrincipalKey("MessageId", "ConsumerId");
+                });
+
+            modelBuilder.Entity("Zeiss.Products.Infrastructure.Database.Entities.InventoryEntity", b =>
+                {
+                    b.HasOne("Zeiss.Products.Infrastructure.Database.Entities.ProductEntity", null)
+                        .WithOne("Inventory")
+                        .HasForeignKey("Zeiss.Products.Infrastructure.Database.Entities.InventoryEntity", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Zeiss.Products.Infrastructure.Database.Entities.ProductEntity", b =>
+                {
+                    b.Navigation("Inventory");
                 });
 #pragma warning restore 612, 618
         }

@@ -2,7 +2,7 @@ namespace Zeiss.Products.Infrastructure.Database.Entities;
 
 internal sealed class ProductEntity
 {
-    public required long Id { get; set; }
+    public required int Id { get; set; }
     public required string Name { get; set; }
     public required string Sku { get; set; }
     public required string? Description { get; set; }
@@ -12,4 +12,5 @@ internal sealed class ProductEntity
     public required DateTime CreatedAt { get; set; }
     public required DateTime? UpdatedAt { get; set; }
     public required DateTime? DeletedAt { get; set; }
+    public required InventoryEntity? Inventory { get; set; }
 }

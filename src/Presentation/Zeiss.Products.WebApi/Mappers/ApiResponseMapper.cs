@@ -10,7 +10,20 @@ internal static class ApiResponseMapper
         return new ApiResponse<T>(
             result.IsSuccess,
             result.Value,
-            result.Errors?.Select(x => new ApiError(x.Code, x.Message)).ToArray(),
+            result.Errors.Select(x => new ApiMessage(x.Code, x.Message)).ToArray(),
+            new
+            {
+                Timestamp = DateTime.UtcNow,
+            }
+        );
+    }
+    
+    public static object ToApiResponse<T>(this T data)
+    {
+        return new ApiResponse<T>(
+            data is not null,
+            data,
+            [],
             new
             {
                 Timestamp = DateTime.UtcNow,

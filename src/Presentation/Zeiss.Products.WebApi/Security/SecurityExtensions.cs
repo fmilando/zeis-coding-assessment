@@ -16,18 +16,22 @@ internal static class SecurityExtensions
         .AddJwtBearer(options =>
         {
             var settings = configuration.GetRequiredSection(JwtSettings.SectionName).Get<JwtSettings>()!;
-            var secretKey = Encoding.UTF8.GetBytes(settings.SecretKey);
+            var signingKey = Encoding.UTF8.GetBytes(settings.SecretKey);
+            var decryptionKey = new SymmetricSecurityKey(signingKey[..32]);
 
             options.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuer = true,
+                ValidateIssuer = false,
                 ValidIssuer = settings.Issuer,
-                ValidateAudience = true,
+                ValidateAudience = false,
                 ValidAudience = settings.Audience,
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(secretKey),
-                ClockSkew = TimeSpan.Zero
+                IssuerSigningKey = decryptionKey,
+                TokenDecryptionKey = decryptionKey,
+                ClockSkew = TimeSpan.Zero,
+                RequireSignedTokens = true,
+                RequireExpirationTime = true
             };
         });
 

@@ -11,7 +11,7 @@ internal static class SwaggerExtensions
     {
         services.AddOpenApi(options =>
         {
-            options.AddDocumentTransformer((document, context, ct) =>
+            options.AddDocumentTransformer((document, _, ct) =>
             {
                 ct.ThrowIfCancellationRequested();
 

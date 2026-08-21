@@ -1,3 +1,4 @@
+using System.Data;
 using Bogus;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -5,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Zeiss.Products.Domain.Entities;
 using Zeiss.Products.Infrastructure.Database;
-using Zeiss.Products.Infrastructure.Repositories;
+using Zeiss.Products.Infrastructure.Database.Repositories;
 
 namespace Zeiss.Products.UnitTests.Infrastructure.Repositories;
 
@@ -15,6 +16,7 @@ public sealed class InventoryRepositoryTests : IDisposable
     private readonly SqliteConnection _connection;
     private readonly PersistenceDbContext _dbContext;
     private readonly InventoryRepository _inventory;
+    private readonly UnitOfWork _unitOfWork;
 
     public InventoryRepositoryTests()
     {
@@ -28,6 +30,7 @@ public sealed class InventoryRepositoryTests : IDisposable
         var loggerMock = new Mock<ILogger<DbErrorInterceptor>>();
         var interceptor = new DbErrorInterceptor(loggerMock.Object);
         _dbContext = new PersistenceDbContext(options, interceptor);
+        _unitOfWork = new UnitOfWork(_dbContext);
         _dbContext.Database.EnsureCreated();
 
         _inventory = new InventoryRepository(_dbContext);
@@ -43,7 +46,7 @@ public sealed class InventoryRepositoryTests : IDisposable
     public async Task AddAsync_WhenValidInventory_ShouldPersistAndReturnInventory()
     {
         // Arrange
-        var productId = _faker.Random.Long(1, 1000);
+        var productId = _faker.Random.Int(100_000, 999_000);
         var quantity = _faker.Random.Int(10, 500);
         var inventory = new Inventory(productId, quantity);
 
@@ -64,13 +67,13 @@ public sealed class InventoryRepositoryTests : IDisposable
     public async Task GetAsync_WhenInventoryExists_ShouldReturnInventory()
     {
         // Arrange
-        var productId = _faker.Random.Long(1, 1000);
+        var productId = _faker.Random.Int(100_000, 999_999);
         var quantity = _faker.Random.Int(10, 500);
         var inventory = new Inventory(productId, quantity);
         await _inventory.AddAsync(inventory, CancellationToken.None);
 
         // Act
-        var result = await _inventory.GetAsync(productId, CancellationToken.None);
+        var result = await _inventory.GetByProductIdAsync(productId, CancellationToken.None);
 
         // Assert
         Assert.NotNull(result);
@@ -82,10 +85,10 @@ public sealed class InventoryRepositoryTests : IDisposable
     public async Task GetAsync_WhenInventoryDoesNotExist_ShouldReturnNull()
     {
         // Arrange
-        var nonExistentProductId = _faker.Random.Long(9999, 99999);
+        var nonExistentProductId = _faker.Random.Int(100_000, 999_999);
 
         // Act
-        var result = await _inventory.GetAsync(nonExistentProductId, CancellationToken.None);
+        var result = await _inventory.GetByProductIdAsync(nonExistentProductId, CancellationToken.None);
 
         // Assert
         Assert.Null(result);
@@ -95,7 +98,7 @@ public sealed class InventoryRepositoryTests : IDisposable
     public async Task UpdateAsync_WhenInventoryExists_ShouldUpdateQuantity()
     {
         // Arrange
-        var productId = _faker.Random.Long(1, 1000);
+        var productId = _faker.Random.Int(100_000, 999_999);
         var initialQuantity = _faker.Random.Int(10, 50);
         var added = await _inventory.AddAsync(new Inventory(productId, initialQuantity), CancellationToken.None);
 
@@ -125,13 +128,13 @@ public sealed class InventoryRepositoryTests : IDisposable
     public async Task Transaction_WhenStartedAndCompleted_ShouldCommitSuccessfully()
     {
         // Arrange
-        var productId = _faker.Random.Long(1, 1000);
+        var productId = _faker.Random.Int(100_000, 999_000);
         var inventory = new Inventory(productId, 100);
 
         // Act
-        await _inventory.StartAsync(CancellationToken.None);
+        await _unitOfWork.StartAsync(IsolationLevel.RepeatableRead, CancellationToken.None);
         await _inventory.AddAsync(inventory, CancellationToken.None);
-        await _inventory.CompleteAsync(CancellationToken.None);
+        await _unitOfWork.CompleteAsync(CancellationToken.None);
 
         // Assert
         _dbContext.ChangeTracker.Clear();
@@ -145,13 +148,13 @@ public sealed class InventoryRepositoryTests : IDisposable
     public async Task Transaction_WhenDiscarded_ShouldRollbackSuccessfully()
     {
         // Arrange
-        var productId = _faker.Random.Long(1, 1000);
+        var productId = _faker.Random.Int(100_000, 999_000);
         var inventory = new Inventory(productId, 100);
 
         // Act
-        await _inventory.StartAsync(CancellationToken.None);
+        await _unitOfWork.StartAsync(IsolationLevel.RepeatableRead, CancellationToken.None);
         await _inventory.AddAsync(inventory, CancellationToken.None);
-        await _inventory.DiscardAsync(CancellationToken.None);
+        await _unitOfWork.DiscardAsync(CancellationToken.None);
 
         // Assert
         _dbContext.ChangeTracker.Clear();
@@ -164,13 +167,13 @@ public sealed class InventoryRepositoryTests : IDisposable
     public async Task StartAsync_WhenTransactionAlreadyStarted_ShouldThrowInvalidOperationException()
     {
         // Arrange
-        await _inventory.StartAsync(CancellationToken.None);
+        await _unitOfWork.StartAsync(IsolationLevel.RepeatableRead, CancellationToken.None);
 
-        // Act & Assert
+        // Act and Assert
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            _inventory.StartAsync(CancellationToken.None));
+            _unitOfWork.StartAsync(IsolationLevel.RepeatableRead, CancellationToken.None));
 
         // Cleanup
-        await _inventory.DiscardAsync(CancellationToken.None);
+        await _unitOfWork.DiscardAsync(CancellationToken.None);
     }
 }

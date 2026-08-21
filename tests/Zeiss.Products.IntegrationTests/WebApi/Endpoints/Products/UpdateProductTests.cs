@@ -34,7 +34,7 @@ public class UpdateProductTests : IClassFixture<CustomWebApplicationFactory>
         };
 
         _factory.ProductRepositoryMock.Setup(x =>
-            x.GetByIdAsync(99, It.IsAny<CancellationToken>())
+            x.GetAsync(99, It.IsAny<CancellationToken>())
         ).ReturnsAsync((Product?)null);
 
         // Act

@@ -3,7 +3,7 @@ using Zeiss.Products.Domain.Exceptions;
 
 namespace Zeiss.Products.Domain.Entities;
 
-public sealed class Product : Entity<long>
+public sealed record Product : Entity<int>
 {
     public string Name { get; private set; }
     public string Sku { get; private set; }
@@ -14,9 +14,10 @@ public sealed class Product : Entity<long>
     public DateTime CreatedAt { get; private set; }
     public DateTime? UpdatedAt { get; private set; }
     public DateTime? DeletedAt { get; private set; }
+    public Inventory? Inventory { get; private set; }
 
     public Product(
-        long id,
+        int id,
         string name,
         string sku,
         string? description,
@@ -25,7 +26,8 @@ public sealed class Product : Entity<long>
         bool isDeleted,
         DateTime createdAt,
         DateTime? updatedAt,
-        DateTime? deletedAt
+        DateTime? deletedAt,
+        Inventory? inventory
     ) : base(id)
     {
         Name = EnsureName(name);
@@ -37,6 +39,7 @@ public sealed class Product : Entity<long>
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
         DeletedAt = deletedAt;
+        Inventory = inventory;
     }
 
     public Product(
@@ -44,7 +47,7 @@ public sealed class Product : Entity<long>
         string sku,
         string? description,
         decimal price
-    ) : this(0, name, sku, description, price, true, false, DateTime.UtcNow, null, null)
+    ) : this(0, name, sku, description, price, true, false, DateTime.UtcNow, null, null, null)
     {
         AddEvent(new ProductCreatedEvent(this));
     }
@@ -105,6 +108,8 @@ public sealed class Product : Entity<long>
         AddEvent(@event);
     }
 
+    public void SetInventory(Inventory inventory) => Inventory = inventory;
+    
     public void Delete()
     {
         if (IsDeleted)

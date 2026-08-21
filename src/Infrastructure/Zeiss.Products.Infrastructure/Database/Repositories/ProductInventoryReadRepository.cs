@@ -1,9 +1,8 @@
 using Dapper;
 using Zeiss.Products.Application.Features.Products.Queries;
 using Zeiss.Products.Domain.Common;
-using Zeiss.Products.Infrastructure.Database;
 
-namespace Zeiss.Products.Infrastructure.Repositories;
+namespace Zeiss.Products.Infrastructure.Database.Repositories;
 
 internal sealed class ProductInventoryReadRepository(
     IDbConnectionFactory connectionFactory
@@ -19,22 +18,22 @@ internal sealed class ProductInventoryReadRepository(
         using var connection = connectionFactory.Create();
         connection.Open();
 
-        const string countQuery = """SELECT COUNT(1) FROM "Products" """;
-
         const string query = $"""
                      {BaseQuery}
                      LIMIT @pageSize OFFSET @page;
+                     
+                     SELECT COUNT(1) FROM "Products";
                      """;
 
-        var totalItems = await connection.ExecuteScalarAsync<int>(countQuery);
+        var reader = await connection.QueryMultipleAsync(query, new
+        {
+            page = (pageNumber - 1) * pageSize,
+            pageSize
+        });
+        
+        var items = (await reader.ReadAsync<ProductInventoryReadModel>()).ToList();
+        var totalItems = await reader.ReadSingleAsync<int>();
         var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
-
-        var items = (await connection.QueryAsync<ProductInventoryReadModel>(
-            query, new
-            {
-                page = (pageNumber - 1) * pageSize,
-                pageSize,
-            })).ToList();
 
         var pagedResult = new PagedResult<IReadOnlyCollection<ProductInventoryReadModel>>(
             items.AsReadOnly(),
@@ -53,10 +52,7 @@ internal sealed class ProductInventoryReadRepository(
         using var connection = connectionFactory.Create();
         connection.Open();
 
-        const string query = $"""
-                              {BaseQuery}
-                              AND p."Id" = @productId;
-                              """;
+        const string query = $""" {BaseQuery} AND p."Id" = @productId; """;
 
         var items = (await connection.QueryAsync<ProductInventoryReadModel>(
             query, new
@@ -80,35 +76,29 @@ internal sealed class ProductInventoryReadRepository(
         connection.Open();
 
         const string criteria = """
-                                i."Quantity" BETWEEN COALESCE(@minStock, i."Quantity") AND COALESCE(@maxStock, i."Quantity")
+                                i."Quantity" BETWEEN COALESCE(@minStock, i."Quantity") 
+                                AND COALESCE(@maxStock, i."Quantity")
                                 """;
-        const string countQuery = $""""
-                                  SELECT COUNT(1) FROM "Inventory" i
-                                  WHERE {criteria};
-                                  """";
 
         const string query = $"""
-                              {BaseQuery}
-                              AND {criteria} 
+                              {BaseQuery} AND {criteria} 
                               LIMIT @pageSize OFFSET @page;
+                              
+                              SELECT COUNT(1) FROM "Inventory" i
+                              WHERE {criteria};
                               """;
 
-        var totalItems = await connection.ExecuteScalarAsync<int>(countQuery, new
+        var reader = await connection.QueryMultipleAsync(query, new
         {
             minStock,
             maxStock,
+            page = (pageNumber - 1) * pageSize,
+            pageSize
         });
 
+        var items = (await reader.ReadAsync<ProductInventoryReadModel>()).ToList();
+        var totalItems = await reader.ReadSingleAsync<int>();
         var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
-
-        var items = (await connection.QueryAsync<ProductInventoryReadModel>(
-            query, new
-            {
-                minStock,
-                maxStock,
-                page = (pageNumber - 1) * pageSize,
-                pageSize,
-            })).ToList();
 
         var pagedResult = new PagedResult<IReadOnlyCollection<ProductInventoryReadModel>>(
             items.AsReadOnly(),
@@ -129,29 +119,25 @@ internal sealed class ProductInventoryReadRepository(
         using var connection = connectionFactory.Create();
         connection.Open();
 
-        const string criteria = """UPPER("Name") LIKE UPPER(@pattern)""";
-        const string countQuery = $"""SELECT COUNT(1) FROM "Products" WHERE {criteria};""";
-
+        const string criteria = """UPPER("Name") LIKE CONCAT('%', UPPER(@text), '%')""";
+        
         const string query = $"""
-                              {BaseQuery}
-                              AND {criteria}
+                              {BaseQuery} AND {criteria}
                               LIMIT @pageSize OFFSET @page;
+                              
+                              SELECT COUNT(1) FROM "Products" WHERE {criteria};
                               """;
 
-        var totalItems = await connection.ExecuteScalarAsync<int>(countQuery, new
+        var reader = await connection.QueryMultipleAsync(query, new
         {
-            pattern = $"%{text}%"
+            text,
+            page = (pageNumber - 1) * pageSize,
+            pageSize
         });
 
+        var items = (await reader.ReadAsync<ProductInventoryReadModel>()).ToList();
+        var totalItems = await reader.ReadSingleAsync<int>();
         var totalPages = (int)Math.Ceiling((double)totalItems / pageSize);
-
-        var items = (await connection.QueryAsync<ProductInventoryReadModel>(
-            query, new
-            {
-                pattern = $"%{text}%",
-                page = (pageNumber - 1) * pageSize,
-                pageSize,
-            })).ToList();
 
         var pagedResult = new PagedResult<IReadOnlyCollection<ProductInventoryReadModel>>(
             items.AsReadOnly(),

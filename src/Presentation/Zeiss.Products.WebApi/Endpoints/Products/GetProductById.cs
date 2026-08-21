@@ -1,6 +1,7 @@
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Zeiss.Products.Application.Features;
 using Zeiss.Products.Application.Features.Products.Queries.GetProductById;
-using Zeiss.Products.Application.Interfaces.Handlers;
 using Zeiss.Products.WebApi.Mappers;
 using ILogger = Serilog.ILogger;
 
@@ -9,15 +10,13 @@ namespace Zeiss.Products.WebApi.Endpoints.Products;
 internal static class GetProductById
 {
     public static async Task<IResult> HandleAsync(
-        IRequestDispatcher dispatcher,
+        ISender sender,
         ILogger logger,
         [FromRoute] int id,
         HttpContext context)
     {
         var query = new GetProductByIdQuery(id);
-        var result = await dispatcher.DispatchAsync<GetProductByIdQuery, GetProductByIdResult>(
-            query,
-            context.RequestAborted);
+        var result = await sender.Send(query, context.RequestAborted);
 
         var response = result.ToApiResponse();
 
@@ -27,7 +26,11 @@ internal static class GetProductById
         }
 
         logger.Error("Failed to get product by id {ProductId}: {Reason}", id, result.Errors);
-
-        return Results.BadRequest(response);
+        
+        var isNotFound = result.Errors.Any(x => x.Code == ErrorCodes.Product.NotFound);
+        
+        return isNotFound 
+            ? Results.NotFound(response) 
+            : Results.BadRequest(response);
     }
 }
