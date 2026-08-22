@@ -23,9 +23,7 @@ internal sealed class ProductRepository(PersistenceDbContext context) : IProduct
 
     public async Task<Product> AddAsync(Product product, CancellationToken cancellationToken)
     {
-        var entity = ProductEntityMapper.ToEntity(product);
-        context.Products.Add(entity);
-
+        var entity = product.ToEntity();
         var result = await context.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 

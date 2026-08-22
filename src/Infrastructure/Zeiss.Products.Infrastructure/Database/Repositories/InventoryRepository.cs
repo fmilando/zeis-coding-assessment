@@ -19,8 +19,6 @@ internal sealed class InventoryRepository(PersistenceDbContext context) : IInven
     public async Task<Inventory> AddAsync(Inventory inventory, CancellationToken cancellationToken)
     {
         var entity = inventory.ToEntity()!;
-        context.Inventory.Add(entity);
-
         var result = await context.AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 

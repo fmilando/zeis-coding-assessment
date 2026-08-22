@@ -18,5 +18,9 @@ public sealed class GetByStockLevelQueryValidator : AbstractValidator<GetByStock
         RuleFor(x => new { x.MinQuantity, x.MaxQuantity })
             .Must(x => (x.MinQuantity ?? x.MaxQuantity) is not null)
             .WithMessage("Either MinQuantity or MaxQuantity or both must be provided");
+        
+        RuleFor(x => new { x.MinQuantity, x.MaxQuantity })
+            .Must(x => x.MaxQuantity >= x.MinQuantity)
+            .WithMessage("MinQuantity cannot be grater than MaxQuantity");
     }
 }
