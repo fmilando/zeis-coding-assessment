@@ -3,6 +3,7 @@ namespace Zeiss.Products.Application.Features;
 public static class ErrorCodes
 {
     public const string DuplicateRequest = "DUPLICATE_REQUEST";
+    public const string MissingIdempotencyKey = "MISSING_IDEMPOTENCY_KEY";
     
     public static class Product
     {

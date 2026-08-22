@@ -21,7 +21,10 @@ internal static class CachingExtensions
         services.AddSingleton<IConnectionMultiplexer>(provider =>
         {
             var settings = provider.GetRequiredService<IOptions<RedisSettings>>().Value;
-            return ConnectionMultiplexer.Connect(settings.ConnectionString);
+            var options = ConfigurationOptions.Parse(settings.ConnectionString);
+            options.Password = "ze1cach1ng";
+            options.User = null;
+            return ConnectionMultiplexer.Connect(options);
         });
     }
 

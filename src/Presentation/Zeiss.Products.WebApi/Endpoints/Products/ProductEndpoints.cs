@@ -18,7 +18,7 @@ internal static class ProductEndpoints
 
         endpoints.MapPost("/", CreateProduct.HandleAsync)
                  .WithTags(productsTag)
-                 .WithIdempotencyCheck();
+                 .WithIdempotency();
 
         endpoints.MapPut("/{id:int}", UpdateProduct.HandleAsync).WithTags(productsTag);
 

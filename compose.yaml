@@ -98,14 +98,9 @@
     ports:
       - "${REDIS_PORT}:${REDIS_PORT}"
     volumes:
-      - ./dev-data/redis/users.acl:/usr/local/etc/redis/users.acl:ro
       - redis:/data
     command: >
-      redis-server
-      --aclfile /usr/local/etc/redis/users.acl
-      --appendonly yes
-    healthcheck:
-      test: ["CMD", "redis-cli", "--user", "${REDIS_USER}", "--pass", "${REDIS_PASS}", "--no-auth-warning", "ping"]
+      redis-server --requirepass ${REDIS_PASS} --appendonly yes
     restart: always
     
   webapi:
@@ -132,7 +127,7 @@
       RabbitMq__VirtualHost: ${RABBITMQ_VHOST}
       RabbitMq__Username: ${RABBITMQ_USER}
       RabbitMq__Password: ${RABBITMQ_PASS}
-      Redis__ConnectionString: "redis:${REDIS_PORT},user=${REDIS_USER},password=${REDIS_PASS},Ssl=False,abortConnect=False"
+      Redis__ConnectionString: "redis:${REDIS_PORT},password=${REDIS_PASS},Ssl=False,abortConnect=False"
       Redis__RecordRetentionInSeconds: 30
       Elasticsearch__Uri: http://localhost:${ELASTIC_PORT}
       Elasticsearch__IndexFormat: ${ELASTIC_INDEX_FORMAT}

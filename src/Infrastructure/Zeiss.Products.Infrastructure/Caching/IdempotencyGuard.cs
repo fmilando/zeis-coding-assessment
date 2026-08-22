@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 using Zeiss.Products.Application.Interfaces;
 
@@ -7,34 +6,29 @@ namespace Zeiss.Products.Infrastructure.Caching;
 
 internal sealed class IdempotencyGuard(
     IConnectionMultiplexer redis,
-    IOptions<RedisSettings> settings,
     ILogger<IdempotencyGuard> logger) : IIdempotencyGuard
 {
+    private readonly IDatabase _cache = redis.GetDatabase();
+    
     public async Task<string?> GetValueAsync(string key, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-
-        var cache = redis.GetDatabase();
-        return await cache.StringGetAsync(key);
+        return await _cache.StringGetAsync(key);
     }
 
     public async Task SetValueAsync(string key, string value, TimeSpan timeout, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-
-        var cache = redis.GetDatabase();
-        await cache.StringSetAsync(key, value, timeout);
+        await _cache.StringSetAsync(key, value, timeout);
     }
 
-    public async Task<(bool Success, Guid? LockId)> TryLockAsync(string key, CancellationToken cancellationToken)
+    public async Task<bool> TryLockAsync(string key, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var cache = redis.GetDatabase();
-        var lockId = Guid.NewGuid();
-        var success = await cache.LockTakeAsync(
+        var success = await _cache.LockTakeAsync(
             key,
-            lockId.ToString(),
+            "true",
             TimeSpan.FromHours(24));
 
         if (success is false)
@@ -42,14 +36,14 @@ internal sealed class IdempotencyGuard(
             logger.LogInformation("Failed to lock {key}", key);
         }
 
-        return (success, success ? lockId : null);
+        return success;
     }
 
-    public async Task UnlockAsync(string key, Guid lockId, CancellationToken cancellationToken)
+    public async Task UnlockAsync(string key, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        var cache = redis.GetDatabase();
-        await cache.LockReleaseAsync(key, lockId.ToString(), CommandFlags.FireAndForget);
+        var lockValue = await _cache.LockQueryAsync(key);
+        await _cache.LockReleaseAsync(key, lockValue);
     }
 }

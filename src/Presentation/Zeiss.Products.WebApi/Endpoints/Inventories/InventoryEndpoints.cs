@@ -12,10 +12,10 @@ internal static class InventoryEndpoints
 
         endpoints.MapPost("/decrement-stock/{quantity:int}", DecrementStock.HandleAsync)
                  .WithTags(inventoryTag)
-                 .WithIdempotencyCheck();
+                 .WithIdempotency();
 
         endpoints.MapPost("/add-to-stock/{quantity:int}", AddToStock.HandleAsync)
                  .WithTags(inventoryTag)
-                 .WithIdempotencyCheck();
+                 .WithIdempotency();
     }
 }

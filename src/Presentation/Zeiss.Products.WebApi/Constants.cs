@@ -1,6 +1,6 @@
 namespace Zeiss.Products.WebApi;
 
-internal static class ResponseConstants
+internal static class Constants
 {
     public const int DefaultPageSize = 100;
 }

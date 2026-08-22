@@ -29,7 +29,7 @@ public sealed class IdempotencyGuardTests
         ).Returns(_databaseMock.Object);
 
         var options = Options.Create(_settings);
-        _guard = new IdempotencyGuard(_redisMock.Object, options, _loggerMock.Object);
+        _guard = new IdempotencyGuard(_redisMock.Object, _loggerMock.Object);
     }
 
     [Fact]
@@ -137,7 +137,7 @@ public sealed class IdempotencyGuardTests
         // Assert
         Assert.True(success);
         Assert.NotNull(lockId);
-        Assert.NotEqual(Guid.Empty, lockId.Value);
+        Assert.NotEqual(string.Empty, lockId);
     }
 
     [Fact]
@@ -187,7 +187,7 @@ public sealed class IdempotencyGuardTests
     {
         // Arrange
         var key = _faker.Random.AlphaNumeric(10);
-        var lockId = Guid.NewGuid();
+        var lockId = Guid.NewGuid().ToString();
 
         _databaseMock
             .Setup(db => db.LockReleaseAsync(
@@ -211,7 +211,7 @@ public sealed class IdempotencyGuardTests
     {
         // Arrange
         var key = _faker.Random.AlphaNumeric(10);
-        var lockId = Guid.NewGuid();
+        var lockId = Guid.NewGuid().ToString();
         using var cts = new CancellationTokenSource();
         await cts.CancelAsync();
 

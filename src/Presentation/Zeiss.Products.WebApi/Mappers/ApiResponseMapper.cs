@@ -18,10 +18,10 @@ internal static class ApiResponseMapper
         );
     }
     
-    public static object ToApiResponse<T>(this T data)
+    public static object ToApiResponse<T>(this T data, bool success = true)
     {
         return new ApiResponse<T>(
-            data is not null,
+            data is not null && success,
             data,
             [],
             new

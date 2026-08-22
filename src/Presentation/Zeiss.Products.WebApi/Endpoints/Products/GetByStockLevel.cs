@@ -17,7 +17,7 @@ internal static class GetByStockLevel
         var query = new GetByStockLevelQuery(request.Min, request.Max)
         {
             PageNumber = request.PageNumber ?? 1,
-            PageSize = request.PageSize ?? ResponseConstants.DefaultPageSize
+            PageSize = request.PageSize ?? Constants.DefaultPageSize
         };
 
         var result = await sender.Send(query, context.RequestAborted);

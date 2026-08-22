@@ -1,99 +1,71 @@
-using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
-using Microsoft.AspNetCore.Mvc;
 using Zeiss.Products.Application.Features;
 using Zeiss.Products.Application.Interfaces;
 using Zeiss.Products.Application.Results;
-using Zeiss.Products.WebApi.Helpers;
-using Zeiss.Products.WebApi.Security;
+using Zeiss.Products.WebApi.Mappers;
 
 namespace Zeiss.Products.WebApi.Filters;
 
 internal sealed class IdempotencyFilter(IIdempotencyGuard guard) : IEndpointFilter
 {
+    private const string IdempotencyHeaderName = "Idempotency-Key";
+    
     public async ValueTask<object?> InvokeAsync(
-        EndpointFilterInvocationContext context,
-        EndpointFilterDelegate next
-    )
+        EndpointFilterInvocationContext context, 
+        EndpointFilterDelegate next)
     {
-        //TODO: Fix THIS
-        return await next(context);
-        
-        var cancellationToken = context.HttpContext.RequestAborted;
-        var userId = GetUserUniqueId(context.HttpContext.User);
-        var endpoint = HttpContextHelper.GetRequestEndpoint(context.HttpContext);
-        var content = await GetRequestBodyAsync(
-            context.HttpContext.Request,
-            context.HttpContext.RequestAborted);
+        var idempotencyKey = context.HttpContext.Request.Headers[IdempotencyHeaderName];
 
-        var fingerprint = GenerateRequestFingerprint(
-            userId,
-            context.HttpContext.Request.Method,
-            endpoint,
-            content);
-
-        var lockKey = $"idempotency:lock:{fingerprint}";
-        var resultKey = $"idempotency:result:{fingerprint}";
-        
-        var requestStatus = await guard.GetValueAsync(resultKey, cancellationToken);
-        
-        var (success, lockId) = await guard.TryLockAsync(lockKey, cancellationToken);
-
-        if (success)
+        if (string.IsNullOrEmpty(idempotencyKey) || Guid.TryParse(idempotencyKey, out _) is false)
         {
-            try
-            {
-                var response = await next(context);
-
-                if (response is not IStatusCodeHttpResult { StatusCode: >= 200 and <= 299 })
-                {
-                    await guard.UnlockAsync(lockKey, lockId!.Value, cancellationToken);
-                }
-                
-                return response;
-            }
-            catch
-            {
-                await guard.UnlockAsync(lockKey, lockId!.Value, cancellationToken);
-                throw;
-            }
+            var error = new Error(
+                ErrorCodes.MissingIdempotencyKey,
+                $"Missing the required GUID value from {IdempotencyHeaderName} header.");
+            
+            return Results.BadRequest(error.ToApiResponse(false));
         }
+        
+        var lockKey = $"idempotency:lock:{idempotencyKey}";
+        var cancellationToken = context.HttpContext.RequestAborted;
+        
+        var success = await guard.TryLockAsync(lockKey, cancellationToken);
 
-        var error = new Error(
-            ErrorCodes.DuplicateRequest,
-            "An identical request is being processed.");
+        if (success is false)
+        {
+            var error = new Error(ErrorCodes.DuplicateRequest, "An identical request is being processed.");
+            return Results.Conflict(error.ToApiResponse(false));
+        }
+        
+        var resultKey = $"idempotency:result:{idempotencyKey}";
+        var result = await guard.GetValueAsync(resultKey, cancellationToken);
 
-        Result<string> result = error;
-        return Results.Conflict(result);
-    }
-
-    private static async Task<string> GetRequestBodyAsync(
-        HttpRequest request,
-        CancellationToken cancellationToken)
-    {
-        request.EnableBuffering();
-        using var reader = new StreamReader(request.Body, leaveOpen: true);
-        var content = await reader.ReadToEndAsync(cancellationToken);
-        request.Body.Position = 0;
-
-        return content;
-    }
-
-    private static string GetUserUniqueId(ClaimsPrincipal user)
-    {
-        return user.Claims.First(x => x.Type == JwtSettings.UserUniqueIdClaimName).Value;
-    }
-
-    private static string GenerateRequestFingerprint(
-        string userId,
-        string httpMethod,
-        string requestPath,
-        string requestContent)
-    {
-        var data = $"{userId}.{httpMethod}.{requestPath}.{requestContent}";
-        var bytes = SHA256.HashData(Encoding.UTF8.GetBytes(data));
-        return Convert.ToBase64String(bytes);
+        if (result is not null)
+        {
+            context.HttpContext.Response.Headers["Idempotency-Key-Cache-Hit"] = "true";
+            var cached = JsonSerializer.Deserialize<object>(result)!;
+            await guard.UnlockAsync(lockKey, cancellationToken);
+            
+            return cached;
+        }
+        
+        try
+        {
+            var response = await next(context);
+            
+            if (response is IStatusCodeHttpResult { StatusCode: >= 200 and <= 299 } and IValueHttpResult httpResult)
+            {
+                await guard.SetValueAsync(
+                    resultKey, 
+                    JsonSerializer.Serialize(httpResult.Value), 
+                    TimeSpan.FromHours(24),
+                    cancellationToken);
+            }
+            
+            return response;
+        }
+        finally
+        {
+            await guard.UnlockAsync(lockKey, cancellationToken);
+        }
     }
 }

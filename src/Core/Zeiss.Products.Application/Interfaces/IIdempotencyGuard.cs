@@ -12,7 +12,7 @@ public interface IIdempotencyGuard
         TimeSpan timeout,
         CancellationToken cancellationToken);
 
-    Task<(bool Success, Guid? LockId)> TryLockAsync(string key, CancellationToken cancellationToken);
+    Task<bool> TryLockAsync(string key, CancellationToken cancellationToken);
 
-    Task UnlockAsync(string key, Guid lockId, CancellationToken cancellationToken);
+    Task UnlockAsync(string key, CancellationToken cancellationToken);
 }
