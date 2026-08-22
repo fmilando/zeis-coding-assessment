@@ -5,7 +5,7 @@ using Zeiss.Products.Infrastructure.Logging;
 using Zeiss.Products.WebApi.Converters;
 using Zeiss.Products.WebApi.Endpoints;
 using Zeiss.Products.WebApi.Endpoints.HealthChecks;
-using Zeiss.Products.WebApi.Middlewares;
+using Zeiss.Products.WebApi.Exceptions;
 using Zeiss.Products.WebApi.Security;
 using Zeiss.Products.WebApi.Swagger;
 
@@ -19,11 +19,11 @@ builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddDefaultJsonDateTimeConverter();
 builder.Services.AddApiSecurity(builder.Configuration);
 builder.Services.AddSwaggerPage(builder.Configuration);
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 builder.Host.AddApiLogging(builder.Configuration);
 
 var app = builder.Build();
 
-app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseSerilogRequestLogging();
 app.UseExceptionHandler();
 app.UseSwaggerPage();

@@ -4,6 +4,7 @@ public static class ErrorCodes
 {
     public const string DuplicateRequest = "DUPLICATE_REQUEST";
     public const string MissingIdempotencyKey = "MISSING_IDEMPOTENCY_KEY";
+    public const string UnexpectedError = "UNEXPECTED_ERROR";
     
     public static class Product
     {
