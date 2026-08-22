@@ -4,9 +4,9 @@ using Zeiss.Products.Application.Interfaces;
 
 namespace Zeiss.Products.Infrastructure.Caching;
 
-internal sealed class IdempotencyGuard(
+internal sealed class DistributedCacheLock(
     IConnectionMultiplexer redis,
-    ILogger<IdempotencyGuard> logger) : IIdempotencyGuard
+    ILogger<DistributedCacheLock> logger) : IDistributedCacheLock
 {
     private readonly IDatabase _cache = redis.GetDatabase();
     

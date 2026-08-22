@@ -1,3 +1,5 @@
+using System.Text;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using Zeiss.Products.Application.Features;
 using Zeiss.Products.Application.Interfaces;
@@ -6,7 +8,9 @@ using Zeiss.Products.WebApi.Mappers;
 
 namespace Zeiss.Products.WebApi.Filters;
 
-internal sealed class IdempotencyFilter(IIdempotencyGuard guard) : IEndpointFilter
+internal sealed class IdempotencyFilter(
+    IDistributedCacheLock cacheLock,
+    JsonSerializerOptions serializerOptions) : IEndpointFilter
 {
     private const string IdempotencyHeaderName = "Idempotency-Key";
     
@@ -25,25 +29,28 @@ internal sealed class IdempotencyFilter(IIdempotencyGuard guard) : IEndpointFilt
             return Results.BadRequest(error.ToApiResponse(false));
         }
         
-        var lockKey = $"idempotency:lock:{idempotencyKey}";
+        var fingerprint = GetFingerprint(context.HttpContext.Request.Path, idempotencyKey!);
         var cancellationToken = context.HttpContext.RequestAborted;
+        var lockKey = $"idempotency:lock:{fingerprint}";
         
-        var success = await guard.TryLockAsync(lockKey, cancellationToken);
+        var success = await cacheLock.TryLockAsync(lockKey, cancellationToken);
 
         if (success is false)
         {
-            var error = new Error(ErrorCodes.DuplicateRequest, "An identical request is being processed.");
+            var error = new Error(
+                ErrorCodes.DuplicateRequest,
+                $"A request with the same {IdempotencyHeaderName} is being processed.");
             return Results.Conflict(error.ToApiResponse(false));
         }
         
-        var resultKey = $"idempotency:result:{idempotencyKey}";
-        var result = await guard.GetValueAsync(resultKey, cancellationToken);
+        var resultKey = $"idempotency:result:{fingerprint}";
+        var result = await cacheLock.GetValueAsync(resultKey, cancellationToken);
 
         if (result is not null)
         {
             context.HttpContext.Response.Headers["Idempotency-Key-Cache-Hit"] = "true";
             var cached = JsonSerializer.Deserialize<object>(result)!;
-            await guard.UnlockAsync(lockKey, cancellationToken);
+            await cacheLock.UnlockAsync(lockKey, cancellationToken);
             
             return cached;
         }
@@ -54,9 +61,9 @@ internal sealed class IdempotencyFilter(IIdempotencyGuard guard) : IEndpointFilt
             
             if (response is IStatusCodeHttpResult { StatusCode: >= 200 and <= 299 } and IValueHttpResult httpResult)
             {
-                await guard.SetValueAsync(
+                await cacheLock.SetValueAsync(
                     resultKey, 
-                    JsonSerializer.Serialize(httpResult.Value), 
+                    JsonSerializer.Serialize(httpResult.Value, options: serializerOptions), 
                     TimeSpan.FromHours(24),
                     cancellationToken);
             }
@@ -65,7 +72,13 @@ internal sealed class IdempotencyFilter(IIdempotencyGuard guard) : IEndpointFilt
         }
         finally
         {
-            await guard.UnlockAsync(lockKey, cancellationToken);
+            await cacheLock.UnlockAsync(lockKey, cancellationToken);
         }
+    }
+
+    private static string GetFingerprint(string path, string idempotencyKey)
+    {
+        var bytes = Encoding.UTF8.GetBytes($"{path}:{idempotencyKey}");
+        return Convert.ToBase64String(bytes);
     }
 }

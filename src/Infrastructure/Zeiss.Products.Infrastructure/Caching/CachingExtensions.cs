@@ -17,12 +17,11 @@ internal static class CachingExtensions
             .Bind(configuration.GetSection(RedisSettings.SectionName))
             .ValidateOnStart();
 
-        services.AddScoped<IIdempotencyGuard, IdempotencyGuard>();
+        services.AddScoped<IDistributedCacheLock, DistributedCacheLock>();
         services.AddSingleton<IConnectionMultiplexer>(provider =>
         {
             var settings = provider.GetRequiredService<IOptions<RedisSettings>>().Value;
             var options = ConfigurationOptions.Parse(settings.ConnectionString);
-            options.Password = "ze1cach1ng";
             options.User = null;
             return ConnectionMultiplexer.Connect(options);
         });

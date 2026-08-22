@@ -1,22 +1,21 @@
 using Bogus;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Moq;
 using StackExchange.Redis;
 using Zeiss.Products.Infrastructure.Caching;
 
 namespace Zeiss.Products.UnitTests.Infrastructure.Caching;
 
-public sealed class IdempotencyGuardTests
+public sealed class DistributedCacheLockTests
 {
     private readonly Faker _faker = new();
     private readonly Mock<IConnectionMultiplexer> _redisMock = new();
     private readonly Mock<IDatabase> _databaseMock = new();
-    private readonly Mock<ILogger<IdempotencyGuard>> _loggerMock = new();
+    private readonly Mock<ILogger<DistributedCacheLock>> _loggerMock = new();
     private readonly RedisSettings _settings;
-    private readonly IdempotencyGuard _guard;
+    private readonly DistributedCacheLock _guard;
 
-    public IdempotencyGuardTests()
+    public DistributedCacheLockTests()
     {
         _settings = new RedisSettings
         {
@@ -28,8 +27,7 @@ public sealed class IdempotencyGuardTests
             redis.GetDatabase(It.IsAny<int>(), It.IsAny<object>())
         ).Returns(_databaseMock.Object);
 
-        var options = Options.Create(_settings);
-        _guard = new IdempotencyGuard(_redisMock.Object, _loggerMock.Object);
+        _guard = new DistributedCacheLock(_redisMock.Object, _loggerMock.Object);
     }
 
     [Fact]
@@ -132,12 +130,10 @@ public sealed class IdempotencyGuardTests
             .ReturnsAsync(true);
 
         // Act
-        var (success, lockId) = await _guard.TryLockAsync(key, CancellationToken.None);
+        var success = await _guard.TryLockAsync(key, CancellationToken.None);
 
         // Assert
         Assert.True(success);
-        Assert.NotNull(lockId);
-        Assert.NotEqual(string.Empty, lockId);
     }
 
     [Fact]
@@ -154,11 +150,10 @@ public sealed class IdempotencyGuardTests
             .ReturnsAsync(false);
 
         // Act
-        var (success, lockId) = await _guard.TryLockAsync(key, CancellationToken.None);
+        var success = await _guard.TryLockAsync(key, CancellationToken.None);
 
         // Assert
         Assert.False(success);
-        Assert.Null(lockId);
 
         _loggerMock.Verify(
             x => x.Log(
@@ -192,17 +187,17 @@ public sealed class IdempotencyGuardTests
         _databaseMock
             .Setup(db => db.LockReleaseAsync(
                 It.Is<RedisKey>(k => k == key),
-                It.Is<RedisValue>(v => v == lockId.ToString()),
+                It.Is<RedisValue>(v => v == lockId),
                 CommandFlags.FireAndForget))
             .ReturnsAsync(true);
 
         // Act
-        await _guard.UnlockAsync(key, lockId, CancellationToken.None);
+        await _guard.UnlockAsync(key, CancellationToken.None);
 
         // Assert
         _databaseMock.Verify(db => db.LockReleaseAsync(
             It.Is<RedisKey>(k => k == key),
-            It.Is<RedisValue>(v => v == lockId.ToString()),
+            It.Is<RedisValue>(v => v == lockId),
             CommandFlags.FireAndForget), Times.Once);
     }
 
@@ -211,11 +206,10 @@ public sealed class IdempotencyGuardTests
     {
         // Arrange
         var key = _faker.Random.AlphaNumeric(10);
-        var lockId = Guid.NewGuid().ToString();
         using var cts = new CancellationTokenSource();
         await cts.CancelAsync();
 
         // Act and Assert
-        await Assert.ThrowsAsync<OperationCanceledException>(() => _guard.UnlockAsync(key, lockId, cts.Token));
+        await Assert.ThrowsAsync<OperationCanceledException>(() => _guard.UnlockAsync(key, cts.Token));
     }
 }

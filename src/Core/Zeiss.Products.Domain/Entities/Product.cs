@@ -114,7 +114,7 @@ public sealed record Product : Entity<int>
     {
         if (IsDeleted)
         {
-            throw new DomainException("Cannot delete an already deleted Product");
+            throw new DomainException("IsDeleted", "Cannot delete an already deleted Product");
         }
 
         IsActive = false;
@@ -131,13 +131,13 @@ public sealed record Product : Entity<int>
 
     private static string EnsureValue(string text, string propertyName) => string.IsNullOrWhiteSpace(text) switch
     {
-        true => throw new DomainException($"Product {propertyName} cannot be null or empty"),
+        true => throw new DomainException(propertyName, $"Product {propertyName} cannot be null or empty"),
         _ => text
     };
 
     private static decimal EnsurePrice(decimal price) => price switch
     {
-        <= 0 => throw new DomainException("Price must be greater than zero"),
+        <= 0 => throw new DomainException(nameof(price), "Price must be greater than zero"),
         _ => price
     };
 

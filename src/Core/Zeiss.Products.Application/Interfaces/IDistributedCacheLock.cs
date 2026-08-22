@@ -1,6 +1,6 @@
 namespace Zeiss.Products.Application.Interfaces;
 
-public interface IIdempotencyGuard
+public interface IDistributedCacheLock
 {
     Task<string?> GetValueAsync(
         string key,

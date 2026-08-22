@@ -110,11 +110,11 @@
       context: .
       dockerfile: src/Presentation/Zeiss.Products.WebApi/Dockerfile
     ports:
-      - "${WEBAPI_HTTP_PORT}:${WEBAPI_HTTP_PORT}"
       - "${WEBAPI_HTTPS_PORT}:${WEBAPI_HTTPS_PORT}"
     environment:
-      ASPNETCORE_URLS: "http://0.0.0.0:${WEBAPI_HTTP_PORT};https://0.0.0.0:${WEBAPI_HTTPS_PORT}"
-      ASPNETCORE_HTTP_PORTS: ${WEBAPI_HTTP_PORT},${WEBAPI_HTTPS_PORT}
+      ASPNETCORE_URLS: "https://0.0.0.0:${WEBAPI_HTTPS_PORT}"
+      Kestrel__Endpoints__Https__Url: "https://0.0.0.0:${WEBAPI_HTTPS_PORT}"
+      ASPNETCORE_HTTPS_PORTS: ${WEBAPI_HTTPS_PORT}
       ASPNETCORE_Kestrel__Certificates__Default__Path: ${WEBAPI_HTTPS_CERT_PATH}
       ASPNETCORE_Kestrel__Certificates__Default__Password: ${WEBAPI_HTTPS_CERT_PASS}
       ConnectionStrings__Postgres: "Host=postgres;Port=${POSTGRES_PORT};Database=${POSTGRES_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASS}"
@@ -127,8 +127,7 @@
       RabbitMq__VirtualHost: ${RABBITMQ_VHOST}
       RabbitMq__Username: ${RABBITMQ_USER}
       RabbitMq__Password: ${RABBITMQ_PASS}
-      Redis__ConnectionString: "redis:${REDIS_PORT},password=${REDIS_PASS},Ssl=False,abortConnect=False"
-      Redis__RecordRetentionInSeconds: 30
+      Redis__ConnectionString: "redis:${REDIS_PORT},password=${REDIS_PASS}"
       Elasticsearch__Uri: http://localhost:${ELASTIC_PORT}
       Elasticsearch__IndexFormat: ${ELASTIC_INDEX_FORMAT}
     

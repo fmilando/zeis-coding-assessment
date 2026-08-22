@@ -1,13 +1,14 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi;
+using Scalar.AspNetCore;
 
-namespace Zeiss.Products.WebApi.Swagger;
+namespace Zeiss.Products.WebApi.ApiReference;
 
-internal static class SwaggerExtensions
+internal static class ApiReferenceExtensions
 {
     private const string PageTitle = "Zeiss.Products.WebApi";
 
-    public static void AddSwaggerPage(this IServiceCollection services, IConfiguration configuration)
+    public static void AddApiReference(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddOpenApi(options =>
         {
@@ -59,10 +60,9 @@ internal static class SwaggerExtensions
                 return Task.CompletedTask;
             });
         });
-
     }
 
-    public static void UseSwaggerPage(this WebApplication app)
+    public static void UseApiReference(this WebApplication app)
     {
         if (app.Environment.IsDevelopment() is false)
         {
@@ -70,10 +70,10 @@ internal static class SwaggerExtensions
         }
 
         app.MapOpenApi();
-        app.UseSwaggerUI(options =>
+        app.MapScalarApiReference("/api/docs", options =>
         {
-            options.SwaggerEndpoint("/openapi/v1.json", PageTitle);
-            options.RoutePrefix = "swagger";
+            options.DarkMode = true;
+            options.Layout = ScalarLayout.Modern;
         });
     }
 }

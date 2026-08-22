@@ -35,7 +35,7 @@ internal static class DecrementStock
             return (isNotFound, isExceeded) switch
             {
                 (true,_) => Results.NotFound(response),
-                (_, true) => Results.Conflict(),
+                (_, true) => Results.Conflict(response),
                 _ => Results.BadRequest(response)
             };
         }

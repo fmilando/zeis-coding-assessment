@@ -36,12 +36,12 @@ public sealed record Inventory : Entity<int>
 
         if (quantity < 0)
         {
-            throw new DomainException("Quantity must be greater than 0");
+            throw new DomainException(nameof(quantity), "Quantity must be greater than 0");
         }
 
         if (Quantity < quantity)
         {
-            throw new DomainException("Not sufficient inventory quantity to decrement");
+            throw new DomainException(nameof(quantity), "Not sufficient inventory quantity to decrement");
         }
 
         var oldQuantity = Quantity;
@@ -66,7 +66,7 @@ public sealed record Inventory : Entity<int>
 
         if (quantity < 0)
         {
-            throw new DomainException("Quantity must be greater than 0");
+            throw new DomainException(nameof(quantity), "Quantity must be greater than 0");
         }
 
         var oldQuantity = Quantity;
@@ -84,7 +84,7 @@ public sealed record Inventory : Entity<int>
 
     private static int EnsureQuantity(int quantity) => quantity switch
     {
-        < 0 => throw new DomainException("Quantity must be zero or greater"),
+        < 0 => throw new DomainException(nameof(quantity), "Quantity must be zero or greater"),
         _ => quantity
     };
 }
