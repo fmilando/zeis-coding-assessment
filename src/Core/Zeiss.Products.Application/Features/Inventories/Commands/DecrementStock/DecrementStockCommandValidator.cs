@@ -3,7 +3,7 @@ using Zeiss.Products.Domain.Constants;
 
 namespace Zeiss.Products.Application.Features.Inventories.Commands.DecrementStock;
 
-internal sealed class DecrementStockCommandValidator : AbstractValidator<DecrementStockCommand>
+public sealed class DecrementStockCommandValidator : AbstractValidator<DecrementStockCommand>
 {
     public DecrementStockCommandValidator()
     {

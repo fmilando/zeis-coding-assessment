@@ -3,7 +3,7 @@ using Zeiss.Products.Domain.Constants;
 
 namespace Zeiss.Products.Application.Features.Products.Commands.CreateProduct;
 
-internal sealed class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
+public sealed class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
 {
     public CreateProductCommandValidator()
     {

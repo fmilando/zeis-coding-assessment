@@ -3,7 +3,7 @@ using Zeiss.Products.Domain.Constants;
 
 namespace Zeiss.Products.Application.Features.Inventories.Commands.AddToStock;
 
-internal sealed class AddToStockCommandValidator : AbstractValidator<AddToStockCommand>
+public sealed class AddToStockCommandValidator : AbstractValidator<AddToStockCommand>
 {
     public AddToStockCommandValidator()
     {

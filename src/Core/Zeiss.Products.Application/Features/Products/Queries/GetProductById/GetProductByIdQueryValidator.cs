@@ -3,7 +3,7 @@ using Zeiss.Products.Domain.Constants;
 
 namespace Zeiss.Products.Application.Features.Products.Queries.GetProductById;
 
-internal sealed class GetProductByIdQueryValidator : AbstractValidator<GetProductByIdQuery>
+public sealed class GetProductByIdQueryValidator : AbstractValidator<GetProductByIdQuery>
 {
     public GetProductByIdQueryValidator()
     {

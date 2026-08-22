@@ -3,10 +3,15 @@ using Zeiss.Products.Domain.Constants;
 
 namespace Zeiss.Products.Application.Features.Products.Commands.UpdateProduct;
 
-internal sealed class UpdateProductCommandValidator : AbstractValidator<UpdateProductCommand>
+public sealed class UpdateProductCommandValidator : AbstractValidator<UpdateProductCommand>
 {
     public UpdateProductCommandValidator()
     {
+        RuleFor(x => x.ProductId)
+            .GreaterThanOrEqualTo(ProductConstants.IdStartValue)
+            .LessThanOrEqualTo(ProductConstants.IdMaxValue)
+            .WithName(nameof(UpdateProductCommand.ProductId));
+        
         RuleFor(x => x.Name)
             .NotEmpty()
             .MaximumLength(ProductConstants.NameMaxLength)

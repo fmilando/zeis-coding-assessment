@@ -2,10 +2,11 @@ using FluentValidation;
 
 namespace Zeiss.Products.Application.Features.Products.Queries.GetByStockLevel;
 
-internal sealed class GetByStockLevelQueryValidator : AbstractValidator<GetByStockLevelQuery>
+public sealed class GetByStockLevelQueryValidator : AbstractValidator<GetByStockLevelQuery>
 {
     public GetByStockLevelQueryValidator()
     {
+        Include(new PaginatedQueryValidator());
         RuleFor(x => x.MinQuantity)
             .Must(min => min is null or >= 0)
             .WithName(nameof(GetByStockLevelQuery.MinQuantity));
